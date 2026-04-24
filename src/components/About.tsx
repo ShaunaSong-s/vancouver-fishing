@@ -10,7 +10,7 @@ const icons = [
 ];
 
 export default function About() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   return (
     <section className="py-24 bg-drift-50">
@@ -18,7 +18,7 @@ export default function About() {
         {/* Section header */}
         <div className="text-center mb-16">
           <span className="text-sea-600 text-sm font-semibold tracking-wider uppercase">
-            Our Advantage
+            {t.sections?.about || 'Our Advantage'}
           </span>
           <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-drift-950 mt-3 mb-4">
             {t.about.title}
@@ -43,11 +43,16 @@ export default function About() {
 
         {/* Photo strip */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-3">
-          {['/images/catch-1.jpg', '/images/boat-1.jpg', '/images/catch-2.jpg', '/images/boat-2.jpg'].map((src, i) => (
+          {[
+            { src: '/images/catch-1.jpg', alt: lang === 'zh' ? '温哥华海钓三文鱼渔获' : 'Vancouver salmon fishing catch' },
+            { src: '/images/boat-1.jpg', alt: lang === 'zh' ? 'Kingfisher 3025 专业海钓船' : 'Kingfisher 3025 fishing boat' },
+            { src: '/images/catch-2.jpg', alt: lang === 'zh' ? '温哥华比目鱼海钓' : 'Vancouver halibut fishing' },
+            { src: '/images/boat-2.jpg', alt: lang === 'zh' ? 'Axopar 37 豪华海钓艇' : 'Axopar 37 luxury fishing vessel' },
+          ].map((img, i) => (
             <div key={i} className="aspect-[4/3] rounded-2xl overflow-hidden">
               <img
-                src={src}
-                alt={`Gallery ${i + 1}`}
+                src={img.src}
+                alt={img.alt}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>

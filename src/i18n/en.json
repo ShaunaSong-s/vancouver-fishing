@@ -132,5 +132,12 @@
     "person": "person",
     "learnMore": "Learn More",
     "bookNow": "Book Now"
+  },
+  "sections": {
+    "about": "Our Advantage",
+    "fleet": "Our Fleet",
+    "booking": "Reservation",
+    "location": "Location",
+    "policy": "Policy"
   }
 }

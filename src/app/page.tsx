@@ -6,6 +6,7 @@ import BookingForm from '@/components/BookingForm';
 import Location from '@/components/Location';
 import Policy from '@/components/Policy';
 import Footer from '@/components/Footer';
+import FloatingCTA from '@/components/FloatingCTA';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -80,6 +81,7 @@ export default function Home() {
       <Location />
       <Policy />
       <Footer />
+      <FloatingCTA />
     </main>
   );
 }

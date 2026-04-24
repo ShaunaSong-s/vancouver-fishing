@@ -76,7 +76,7 @@ export default function Hero() {
           </div>
 
           {/* Stats row */}
-          <div className="mt-16 flex gap-10">
+          <div className="mt-16 flex gap-6 sm:gap-10">
             {[
               { val: '2', label: lang === 'zh' ? '专业船只' : 'Pro Boats' },
               { val: '10+', label: lang === 'zh' ? '年经验' : 'Years Exp.' },

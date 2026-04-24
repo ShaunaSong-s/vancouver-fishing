@@ -132,5 +132,12 @@
     "person": "人",
     "learnMore": "了解更多",
     "bookNow": "立即预定"
+  },
+  "sections": {
+    "about": "我们的优势",
+    "fleet": "专业船队",
+    "booking": "在线预定",
+    "location": "出发地点",
+    "policy": "预定条款"
   }
 }

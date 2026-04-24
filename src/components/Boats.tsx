@@ -26,7 +26,7 @@ export default function Boats() {
     <section id="boats" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="text-sea-600 text-sm font-semibold tracking-wider uppercase">Our Fleet</span>
+          <span className="text-sea-600 text-sm font-semibold tracking-wider uppercase">{t.sections?.fleet || 'Our Fleet'}</span>
           <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-drift-950 mt-3 mb-4">
             {t.boats.title}
           </h2>

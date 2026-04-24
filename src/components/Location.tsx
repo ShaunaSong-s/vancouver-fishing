@@ -9,7 +9,7 @@ export default function Location() {
     <section id="location" className="py-24 bg-drift-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <span className="text-sea-600 text-sm font-semibold tracking-wider uppercase">Location</span>
+          <span className="text-sea-600 text-sm font-semibold tracking-wider uppercase">{t.sections?.location || 'Location'}</span>
           <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-drift-950 mt-3 mb-4">
             {t.location.title}
           </h2>

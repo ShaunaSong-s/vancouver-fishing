@@ -110,7 +110,7 @@ export default function BookingForm() {
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-12">
-          <span className="text-sea-300 text-sm font-semibold tracking-wider uppercase">Reservation</span>
+          <span className="text-sea-300 text-sm font-semibold tracking-wider uppercase">{t.sections?.booking || 'Reservation'}</span>
           <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-white mt-3 mb-4">
             {t.booking.title}
           </h2>
@@ -167,7 +167,7 @@ export default function BookingForm() {
           </div>
 
           {/* Price summary */}
-          <div className="bg-drift-50 rounded-2xl p-5 mb-6 flex flex-col sm:flex-row justify-between items-center gap-3 border border-drift-100">
+          <div className="bg-drift-50 rounded-2xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row justify-between items-center gap-3 border border-drift-100">
             <div className="flex items-baseline gap-2">
               <span className="text-xs text-drift-400 font-medium">{t.booking.totalPrice}</span>
               <span className="text-2xl font-extrabold text-drift-900">${totalPrice.toLocaleString()}</span>
@@ -203,41 +203,41 @@ export default function BookingForm() {
           {/* Payment */}
           <div className="mb-6">
             <label className="block text-xs font-semibold text-drift-700 mb-3 uppercase tracking-wide">{t.booking.payment}</label>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={() => setForm(prev => ({ ...prev, paymentMethod: 'wechat' }))}
-                className={`flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-xl border-2 transition-all text-xs font-semibold ${
+                className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 py-3 sm:py-3.5 rounded-xl border-2 transition-all text-[11px] sm:text-xs font-semibold ${
                   form.paymentMethod === 'wechat'
                     ? 'border-green-500 bg-green-50 text-green-700'
                     : 'border-drift-200 bg-white text-drift-500 hover:border-drift-300'
                 }`}
               >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348z"/></svg>
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348z"/></svg>
                 {t.booking.wechatPay}
               </button>
               <button
                 type="button"
                 onClick={() => setForm(prev => ({ ...prev, paymentMethod: 'e_transfer' }))}
-                className={`flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-xl border-2 transition-all text-xs font-semibold ${
+                className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 py-3 sm:py-3.5 rounded-xl border-2 transition-all text-[11px] sm:text-xs font-semibold ${
                   form.paymentMethod === 'e_transfer'
                     ? 'border-amber-500 bg-amber-50 text-amber-700'
                     : 'border-drift-200 bg-white text-drift-500 hover:border-drift-300'
                 }`}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" /></svg>
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" /></svg>
                 {t.booking.eTransfer}
               </button>
               <button
                 type="button"
                 onClick={() => setForm(prev => ({ ...prev, paymentMethod: 'credit_card' }))}
-                className={`flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-xl border-2 transition-all text-xs font-semibold ${
+                className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 py-3 sm:py-3.5 rounded-xl border-2 transition-all text-[11px] sm:text-xs font-semibold ${
                   form.paymentMethod === 'credit_card'
                     ? 'border-sea-500 bg-sea-50 text-sea-700'
                     : 'border-drift-200 bg-white text-drift-500 hover:border-drift-300'
                 }`}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                 {t.booking.creditCard}
               </button>
             </div>
