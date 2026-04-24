@@ -106,6 +106,24 @@ export default function Footer() {
           <p className="text-sea-300/40 text-xs">{t.footer.rights}</p>
           <p className="text-sea-300/40 text-xs">topfishingcharter.ca</p>
         </div>
+
+        {/* SEO content — visible to search engines */}
+        <div className="border-t border-sea-800/30 pt-6 pb-8 text-sea-300/25 text-[11px] leading-relaxed max-w-4xl mx-auto">
+          <h2 className="text-sea-300/30 text-xs font-semibold mb-2">Vancouver Fishing Charter | 温哥华海钓包船</h2>
+          <p>
+            Top Vancouver Fishing Charter (温哥华海尚海钓) is Vancouver&apos;s premier deep sea fishing charter service based at Steveston Fisherman&apos;s Wharf in Richmond, BC.
+            We offer private charter and shared fishing trips for salmon fishing, halibut fishing, and crab fishing in the waters around Vancouver, the Gulf Islands, and the Strait of Georgia.
+            Our fleet includes the Kingfisher 3025 XRS (30ft, up to 8 guests) and Axopar 37 XC Cross Cabin (37ft, up to 10 guests), both equipped with Garmin GPS fish finders, private washrooms, and professional fishing gear.
+            Our licensed captains hold SVOP, SDV-BS, and ROC-M certifications and provide bilingual Chinese and English service.
+            Departing daily from Steveston Wharf, Richmond BC — the heart of Vancouver&apos;s fishing community.
+          </p>
+          <p className="mt-2">
+            温哥华海尚海钓是温哥华地区最专业的海钓包船服务。我们从列治文Steveston渔人码头出发，提供三文鱼海钓、比目鱼海钓、螃蟹捕捞等多种海钓行程。
+            两艘专业海钓船（Kingfisher 3025 和 Axopar 37），配备Garmin鱼探仪、独立卫生间、全套专业钓具。
+            持牌船长团队持有SVOP、SDV-BS、ROC-M等专业证书，提供中英文双语服务。
+            温哥华海钓、温哥华钓鱼、温哥华包船出海、温哥华华人海钓、列治文海钓首选。
+          </p>
+        </div>
       </div>
     </footer>
   );

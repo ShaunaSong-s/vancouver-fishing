@@ -80,7 +80,7 @@ export default function Hero() {
             {[
               { val: '2', label: lang === 'zh' ? '专业船只' : 'Pro Boats' },
               { val: '10+', label: lang === 'zh' ? '年经验' : 'Years Exp.' },
-              { val: '2000+', label: lang === 'zh' ? '满意客户' : 'Happy Clients' },
+              { val: '5000+', label: lang === 'zh' ? '满意客户' : 'Happy Clients' },
             ].map(({ val, label }) => (
               <div key={val}>
                 <div className="text-2xl sm:text-3xl font-black text-white">{val}</div>
