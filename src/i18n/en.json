@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "home": "Home",
+    "boats": "Our Boats",
+    "booking": "Book Now",
+    "location": "Location",
+    "policy": "Policy",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Vancouver Deep Sea Fishing",
+    "subtitle": "Professional Fishing Charters · Experience the Pacific",
+    "cta": "Book Now",
+    "badge": "Vancouver's Premier Fishing Experience"
+  },
+  "about": {
+    "title": "Why Choose Us",
+    "items": [
+      {
+        "title": "Expert Captains",
+        "desc": "Licensed and experienced captains who know the best fishing spots around Vancouver"
+      },
+      {
+        "title": "Quality Equipment",
+        "desc": "Full professional tackle, life jackets, and bait included"
+      },
+      {
+        "title": "Flexible Options",
+        "desc": "Private charters or shared trips to fit any group size"
+      },
+      {
+        "title": "Bilingual Service",
+        "desc": "Chinese and English service for a worry-free fishing adventure"
+      }
+    ]
+  },
+  "boats": {
+    "title": "Our Fleet",
+    "subtitle": "Choose from two professionally equipped fishing vessels to match your group size and style",
+    "kingfisher": {
+      "name": "Kingfisher 3025 XRS",
+      "desc": "A 30-foot Canadian-built aluminum fishing machine powered by a 500HP Yamaha outboard. Featuring patented Pre-Flex hull technology for an exceptionally smooth and stable ride even in rough seas. Ideal for small groups seeking a serious fishing experience.",
+      "features": ["Up to 8 guests", "30 ft / 9.3 m", "500HP Yamaha Power", "Pre-Flex Aluminum Hull", "Garmin GPS Fish Finder", "Private Washroom"]
+    },
+    "axpor": {
+      "name": "Axopar 37 XC Cross Cabin",
+      "desc": "A 37-foot award-winning Finnish-designed luxury sport boat. The fully enclosed heated wheelhouse ensures comfort in all conditions, while the spacious aft deck provides ample room for fishing. Perfect for larger groups and family outings.",
+      "features": ["Up to 10 guests", "37 ft / 11.3 m", "Award-Winning Finnish Design", "Heated Enclosed Wheelhouse", "Garmin GPS Fish Finder", "Private Washroom"]
+    },
+    "charter": "Private Charter",
+    "perPerson": "Shared Trip / Person",
+    "maxPassengers": "Up to {n} guests",
+    "selectBoat": "Select This Boat",
+    "priceUnit": "CAD"
+  },
+  "booking": {
+    "title": "Book Your Trip",
+    "subtitle": "Select your boat and date to start your fishing adventure",
+    "boatSelect": "Select Boat",
+    "bookingType": "Booking Type",
+    "charter": "Private Charter — Exclusive boat",
+    "shared": "Shared Trip — Per person pricing",
+    "date": "Trip Date",
+    "passengers": "Passengers",
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "email": "Email",
+    "wechat": "WeChat ID (optional)",
+    "payment": "Deposit Payment Method",
+    "wechatPay": "WeChat Transfer",
+    "creditCard": "Credit Card",
+    "eTransfer": "e-Transfer",
+    "notes": "Notes (optional)",
+    "submit": "Submit Booking",
+    "depositNote": "After submitting, please follow the instructions to pay your deposit: $500 CAD for charter, $100/person for shared",
+    "paymentInstructions": {
+      "wechat": "Please add WeChat: haishanghaidiao to transfer the deposit. Include your booking ID in the note.",
+      "e_transfer": "Please send an Interac e-Transfer to info@topfishingcharter.ca with your booking ID in the message.",
+      "credit_card": "We will send a credit card payment link to your email. Please check your inbox."
+    },
+    "totalPrice": "Total Price",
+    "depositAmount": "Deposit",
+    "success": "Booking submitted! We'll confirm via SMS shortly.",
+    "error": "Booking failed. Please try again or contact us directly.",
+    "namePlaceholder": "Enter your full name",
+    "phonePlaceholder": "Enter your phone number",
+    "emailPlaceholder": "Enter your email address",
+    "wechatPlaceholder": "Enter your WeChat ID",
+    "notesPlaceholder": "Any special requests or notes"
+  },
+  "location": {
+    "title": "Boarding Location",
+    "subtitle": "We'll be waiting for you at Steveston Fisherman's Wharf",
+    "address": "Steveston Fisherman's Wharf, Dock #2",
+    "fullAddress": "Steveston Fisherman's Wharf, Dock #2, Richmond, BC",
+    "directions": "Get Directions",
+    "parking": "Ample free parking available near the wharf",
+    "arriveEarly": "Please arrive 15 minutes before departure"
+  },
+  "policy": {
+    "title": "Booking & Cancellation Terms",
+    "subtitle": "Please review the following terms before booking",
+    "items": [
+      {
+        "title": "72+ Hours Prior Notice",
+        "desc": "Cancellation requests submitted 72 hours or more before the scheduled departure will receive a full deposit refund to the original payment method within 3-5 business days."
+      },
+      {
+        "title": "Force Majeure & Weather",
+        "desc": "If the trip is cancelled by the captain due to unsafe weather conditions (winds exceeding 25 knots, heavy rain, dense fog, etc.), clients may choose a full deposit refund or reschedule free of charge to any available date within 30 days."
+      },
+      {
+        "title": "Late Cancellation & No-Show",
+        "desc": "Cancellations made within 72 hours of departure are non-refundable; however, one complimentary reschedule may be requested subject to availability. No-shows without prior notice will forfeit the full deposit with no option to reschedule."
+      }
+    ]
+  },
+  "footer": {
+    "company": "Top Vancouver Fishing Charter",
+    "tagline": "Professional Fishing · Unforgettable Experience",
+    "quickLinks": "Quick Links",
+    "contactUs": "Contact Us",
+    "phone": "Phone",
+    "email": "Email",
+    "wechat": "WeChat",
+    "followUs": "Follow Us",
+    "rights": "© 2026 Top Vancouver Fishing Charter. All rights reserved.",
+    "address": "Steveston Fisherman's Wharf, Dock #2, Richmond, BC, Canada"
+  },
+  "common": {
+    "cad": "CAD",
+    "person": "person",
+    "learnMore": "Learn More",
+    "bookNow": "Book Now"
+  }
+}

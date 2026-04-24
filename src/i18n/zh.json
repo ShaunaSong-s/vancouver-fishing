@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "home": "首页",
+    "boats": "船只",
+    "booking": "预定",
+    "location": "位置",
+    "policy": "政策",
+    "contact": "联系我们"
+  },
+  "hero": {
+    "title": "温哥华深海钓鱼",
+    "subtitle": "专业海钓包船 · 体验太平洋的壮丽",
+    "cta": "立即预定",
+    "badge": "温哥华顶级海钓体验"
+  },
+  "about": {
+    "title": "为什么选择我们",
+    "items": [
+      {
+        "title": "专业船长",
+        "desc": "经验丰富的持牌船长，熟悉温哥华周边最佳钓点"
+      },
+      {
+        "title": "优质装备",
+        "desc": "全套专业钓具、救生衣、鱼饵一应俱全"
+      },
+      {
+        "title": "灵活选择",
+        "desc": "包船或拼船，满足不同团队规模需求"
+      },
+      {
+        "title": "贴心服务",
+        "desc": "中英文服务，让您的海钓之旅无忧无虑"
+      }
+    ]
+  },
+  "boats": {
+    "title": "我们的船队",
+    "subtitle": "两艘专业级海钓船艇，根据您的团队规模和出海偏好自由选择",
+    "kingfisher": {
+      "name": "Kingfisher 3025 XRS",
+      "desc": "30英尺加拿大顶级铝合金海钓船，搭载500马力雅马哈发动机，采用专利Pre-Flex船体技术，在大浪中仍保持稳定舒适。适合小团体追求专业海钓体验。",
+      "features": ["最多8人", "30英尺 / 9.3米", "500HP雅马哈动力", "Pre-Flex铝合金船体", "Garmin GPS鱼探仪", "独立卫生间"]
+    },
+    "axpor": {
+      "name": "Axopar 37 XC Cross Cabin",
+      "desc": "37英尺芬兰设计豪华海钓艇，获得多项欧洲游艇大奖。全封闭式驾驶舱配备暖气系统，宽大后甲板提供充足的钓鱼空间，适合大团体或家庭出海。",
+      "features": ["最多10人", "37英尺 / 11.3米", "芬兰设计获奖船型", "全封闭暖气驾驶舱", "Garmin GPS鱼探仪", "独立卫生间"]
+    },
+    "charter": "包船",
+    "perPerson": "单人拼船",
+    "maxPassengers": "最多 {n} 人",
+    "selectBoat": "选择此船",
+    "priceUnit": "加元"
+  },
+  "booking": {
+    "title": "在线预定",
+    "subtitle": "选择您的船只和出海日期，开启精彩海钓之旅",
+    "boatSelect": "选择船只",
+    "bookingType": "预定类型",
+    "charter": "包船 — 独享整条船",
+    "shared": "拼船 — 按人数计费",
+    "date": "出海日期",
+    "passengers": "人数",
+    "name": "姓名",
+    "phone": "手机号码",
+    "email": "邮箱",
+    "wechat": "微信号（选填）",
+    "payment": "定金支付方式",
+    "wechatPay": "微信转账",
+    "creditCard": "信用卡",
+    "eTransfer": "e-Transfer",
+    "notes": "备注（选填）",
+    "submit": "提交预定",
+    "depositNote": "提交后请按指引支付定金，包船 $500 CAD，拼船 $100/人",
+    "paymentInstructions": {
+      "wechat": "请添加微信 haishanghaidiao 转账定金，备注您的订单号",
+      "e_transfer": "请通过 Interac e-Transfer 转账至 info@topfishingcharter.ca，备注您的订单号",
+      "credit_card": "我们会通过邮件发送信用卡付款链接，请留意查收"
+    },
+    "totalPrice": "总价",
+    "depositAmount": "定金",
+    "success": "预定成功！我们会尽快通过短信确认您的预定。",
+    "error": "预定失败，请稍后再试或直接联系我们。",
+    "namePlaceholder": "请输入您的姓名",
+    "phonePlaceholder": "请输入手机号码",
+    "emailPlaceholder": "请输入邮箱地址",
+    "wechatPlaceholder": "请输入微信号",
+    "notesPlaceholder": "如有特殊要求请在此说明"
+  },
+  "location": {
+    "title": "上船地点",
+    "subtitle": "我们在列治文渔人码头恭候您的到来",
+    "address": "列治文渔人码头 2号台",
+    "fullAddress": "Steveston Fisherman's Wharf, Dock #2, Richmond, BC",
+    "directions": "导航前往",
+    "parking": "码头附近有充足的免费停车位",
+    "arriveEarly": "请提前15分钟到达码头"
+  },
+  "policy": {
+    "title": "预定与取消条款",
+    "subtitle": "请在预定前仔细阅读以下条款",
+    "items": [
+      {
+        "title": "提前72小时以上取消",
+        "desc": "在预定出海日期72小时（含）之前提交取消申请，已支付的定金将全额退还至原支付账户，处理周期为3-5个工作日。"
+      },
+      {
+        "title": "不可抗力及天气取消",
+        "desc": "如因恶劣天气（风力超过25节、暴雨、浓雾等）导致船长判断不宜出海而取消行程，客户可选择全额退还定金或免费改期至未来30天内的可用日期。"
+      },
+      {
+        "title": "72小时内取消及未到场",
+        "desc": "出海日期前72小时内取消预定，定金将不予退还，但可申请一次改期（需视船期情况而定）。预定当日未到场且未提前通知者，定金不予退还且不可改期。"
+      }
+    ]
+  },
+  "footer": {
+    "company": "温哥华海尚海钓",
+    "tagline": "专业海钓 · 难忘体验",
+    "quickLinks": "快速链接",
+    "contactUs": "联系我们",
+    "phone": "电话",
+    "email": "邮箱",
+    "wechat": "微信",
+    "followUs": "关注我们",
+    "rights": "© 2026 温哥华海尚海钓. 保留所有权利.",
+    "address": "列治文渔人码头 2号台, BC, 加拿大"
+  },
+  "common": {
+    "cad": "加元",
+    "person": "人",
+    "learnMore": "了解更多",
+    "bookNow": "立即预定"
+  }
+}
