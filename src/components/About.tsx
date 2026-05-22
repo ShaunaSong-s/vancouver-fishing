@@ -1,6 +1,8 @@
 'use client';
 
 import { useLanguage } from '@/i18n/LanguageContext';
+import Image from 'next/image';
+import AnimateOnScroll from './AnimateOnScroll';
 
 const icons = [
   <svg key="captain" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>,
@@ -13,31 +15,32 @@ export default function About() {
   const { t, lang } = useLanguage();
 
   return (
-    <section className="py-24 bg-drift-50">
+    <section className="py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-16">
-          <span className="text-sea-600 text-sm font-semibold tracking-wider uppercase">
+          <span className="text-gold-400 text-sm font-semibold tracking-wider uppercase">
             {t.sections?.about || 'Our Advantage'}
           </span>
-          <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-drift-950 mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-white mt-3 mb-4">
             {t.about.title}
           </h2>
-          <div className="w-12 h-1 bg-gradient-to-r from-sea-500 to-coral-400 mx-auto rounded-full" />
+          <div className="w-12 h-1 bg-gradient-to-r from-gold-400 to-gold-500 mx-auto rounded-full" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {t.about.items.map((item, i) => (
-            <div
-              key={i}
-              className="group bg-white rounded-2xl p-7 hover:shadow-xl hover:shadow-sea-500/5 transition-all duration-300 border border-drift-100 hover:border-sea-200 hover:-translate-y-1"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sea-50 to-sea-100 text-sea-600 flex items-center justify-center mb-5 group-hover:from-sea-500 group-hover:to-sea-600 group-hover:text-white transition-all duration-300">
-                {icons[i]}
+            <AnimateOnScroll key={i} delay={i * 100}>
+              <div
+                className="group glass rounded-2xl p-7 hover:shadow-xl hover:shadow-gold-400/5 transition-all duration-300 hover:border-gold-400/25 hover:-translate-y-1 card-hover"
+              >
+                <div className="w-12 h-12 rounded-xl bg-gold-400/10 text-gold-400 flex items-center justify-center mb-5 group-hover:bg-gold-400 group-hover:text-sea-900 transition-all duration-300">
+                  {icons[i]}
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-white/60 text-sm leading-relaxed">{item.desc}</p>
               </div>
-              <h3 className="text-base font-bold text-drift-900 mb-2">{item.title}</h3>
-              <p className="text-drift-500 text-sm leading-relaxed">{item.desc}</p>
-            </div>
+            </AnimateOnScroll>
           ))}
         </div>
 
@@ -49,11 +52,14 @@ export default function About() {
             { src: '/images/catch-2.jpg', alt: lang === 'zh' ? '温哥华比目鱼海钓' : 'Vancouver halibut fishing' },
             { src: '/images/boat-2.jpg', alt: lang === 'zh' ? 'Axopar 37 豪华海钓艇' : 'Axopar 37 luxury fishing vessel' },
           ].map((img, i) => (
-            <div key={i} className="aspect-[4/3] rounded-2xl overflow-hidden">
-              <img
+            <div key={i} className="aspect-[4/3] rounded-2xl overflow-hidden relative">
+              <Image
                 src={img.src}
                 alt={img.alt}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                fill
+                className="object-cover hover:scale-105 transition-transform duration-700"
+                sizes="(max-width: 768px) 50vw, 25vw"
+                quality={75}
               />
             </div>
           ))}

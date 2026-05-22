@@ -1,6 +1,7 @@
 'use client';
 
 import { useLanguage } from '@/i18n/LanguageContext';
+import AnimateOnScroll from './AnimateOnScroll';
 
 const policyIcons = [
   <svg key="check" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -15,38 +16,39 @@ const policyIcons = [
 ];
 
 const colors = [
-  { bg: 'bg-green-50', border: 'border-green-100', icon: 'text-green-600', badge: 'bg-green-100 text-green-700' },
-  { bg: 'bg-sky-50', border: 'border-sky-100', icon: 'text-sky-600', badge: 'bg-sky-100 text-sky-700' },
-  { bg: 'bg-amber-50', border: 'border-amber-100', icon: 'text-amber-600', badge: 'bg-amber-100 text-amber-700' },
+  { bg: 'bg-green-500/10', border: 'border-green-500/20', icon: 'text-green-400', badge: 'bg-green-500/15 text-green-400' },
+  { bg: 'bg-sky-500/10', border: 'border-sky-500/20', icon: 'text-sky-400', badge: 'bg-sky-500/15 text-sky-400' },
+  { bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: 'text-amber-400', badge: 'bg-amber-500/15 text-amber-400' },
 ];
 
 export default function Policy() {
   const { t } = useLanguage();
 
   return (
-    <section id="policy" className="py-24 bg-white">
+    <section id="policy" className="py-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <span className="text-sea-600 text-sm font-semibold tracking-wider uppercase">{t.sections?.policy || 'Policy'}</span>
-          <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-drift-950 mt-3 mb-4">
+          <span className="text-gold-400 text-sm font-semibold tracking-wider uppercase">{t.sections?.policy || 'Policy'}</span>
+          <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-white mt-3 mb-4">
             {t.policy.title}
           </h2>
-          <p className="text-drift-500 text-base max-w-lg mx-auto">{t.policy.subtitle}</p>
-          <div className="w-12 h-1 bg-gradient-to-r from-sea-500 to-coral-400 mx-auto rounded-full mt-4" />
+          <p className="text-white/60 text-base max-w-lg mx-auto">{t.policy.subtitle}</p>
+          <div className="w-12 h-1 bg-gradient-to-r from-gold-400 to-gold-500 mx-auto rounded-full mt-4" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {t.policy.items.map((item, i) => (
-            <div
-              key={i}
-              className={`rounded-2xl p-6 border ${colors[i].bg} ${colors[i].border} transition-all hover:shadow-lg hover:-translate-y-1 duration-300`}
-            >
-              <div className={`w-12 h-12 rounded-xl ${colors[i].badge} flex items-center justify-center mb-5`}>
-                {policyIcons[i]}
+            <AnimateOnScroll key={i} delay={i * 100}>
+              <div
+                className={`rounded-2xl p-6 border ${colors[i].bg} ${colors[i].border} transition-all hover:shadow-lg hover:-translate-y-1 duration-300 h-full`}
+              >
+                <div className={`w-12 h-12 rounded-xl ${colors[i].badge} flex items-center justify-center mb-5`}>
+                  {policyIcons[i]}
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-white/60 text-sm leading-relaxed">{item.desc}</p>
               </div>
-              <h3 className="text-base font-bold text-drift-900 mb-2">{item.title}</h3>
-              <p className="text-drift-500 text-sm leading-relaxed">{item.desc}</p>
-            </div>
+            </AnimateOnScroll>
           ))}
         </div>
       </div>

@@ -18,7 +18,7 @@ export default function FloatingCTA() {
       {/* Phone */}
       <a
         href="tel:6729657666"
-        className="w-12 h-12 sm:w-14 sm:h-14 bg-sea-600 hover:bg-sea-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-sea-600/30 transition-all hover:scale-105"
+        className="w-12 h-12 sm:w-14 sm:h-14 bg-gold-500 hover:bg-gold-600 text-sea-900 rounded-full flex items-center justify-center shadow-lg shadow-gold-500/30 transition-all hover:scale-105"
         aria-label="Call us"
       >
         <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>

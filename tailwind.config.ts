@@ -7,21 +7,34 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Deep teal — primary brand color
+        // Deep ocean navy — page background (matches mini-program)
         sea: {
-          50: '#edfcfa',
-          100: '#d2f7f3',
-          200: '#a9efe8',
-          300: '#72e1d8',
-          400: '#3ec9c1',
-          500: '#22ada7',
-          600: '#198b88',
-          700: '#186f6e',
-          800: '#185959',
-          900: '#194a4a',
-          950: '#082e2f',
+          50: '#e0f4fc',
+          100: '#b8e4f5',
+          200: '#7ec8e3',
+          300: '#4fa8c9',
+          400: '#2d7fa3',
+          500: '#1a5a7a',
+          600: '#134560',
+          700: '#0d2f45',
+          800: '#0d1f3c',
+          900: '#0a1628',
+          950: '#060e1a',
         },
-        // Warm coral accent
+        // Warm gold accent (matches mini-program primary)
+        gold: {
+          50: '#fdf8ed',
+          100: '#f5eed9',
+          200: '#ecdcb3',
+          300: '#e8d5a3',
+          400: '#dfc08a',
+          500: '#c9a96e',
+          600: '#b8945a',
+          700: '#9a7a48',
+          800: '#7d6238',
+          900: '#5e4a2b',
+        },
+        // Keep coral for CTA/highlights
         coral: {
           50: '#fff4f1',
           100: '#ffe7e0',
@@ -34,27 +47,42 @@ const config: Config = {
           800: '#9e2f14',
           900: '#832c18',
         },
-        // Neutral slate for backgrounds
+        // Dark neutrals for cards/text
         drift: {
           50: '#f8fafb',
-          100: '#f0f4f6',
-          200: '#e4eaed',
-          300: '#cdd6dc',
-          400: '#9eadb8',
-          500: '#758796',
-          600: '#5d6f7d',
-          700: '#4b5a66',
-          800: '#414d56',
-          900: '#39434a',
-          950: '#1c2429',
+          100: '#e8ecf0',
+          200: '#c8d1d9',
+          300: '#9eadb8',
+          400: '#758796',
+          500: '#5d6f7d',
+          600: '#4b5a66',
+          700: '#39434a',
+          800: '#1c2429',
+          900: '#121820',
+          950: '#0a0f14',
         },
       },
       fontFamily: {
-        heading: ['"Inter"', 'system-ui', 'sans-serif'],
-        body: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        heading: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        body: ['var(--font-inter)', 'var(--font-noto-sc)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        mono: ['SF Mono', 'Fira Code', 'monospace'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
+      keyframes: {
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(16px) scale(0.97)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        'slide-in-right': {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+      },
+      animation: {
+        'fade-in-up': 'fade-in-up 0.25s ease-out',
+        'slide-in-right': 'slide-in-right 0.3s ease-out',
       },
     },
   },

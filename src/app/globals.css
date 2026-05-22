@@ -3,8 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --color-sea-600: #198b88;
-  --color-coral-500: #f75f3b;
+  --color-sea-600: #134560;
+  --color-gold-400: #dfc08a;
+  --color-gold-500: #c9a96e;
+  --accent: #dfc08a;
+  --accent-light: rgba(223,192,138,0.15);
+  --accent-border: rgba(223,192,138,0.25);
+  --card-bg: rgba(255,255,255,0.04);
+  --card-border: rgba(223,192,138,0.12);
+  --grain-opacity: 0.02;
 }
 
 html {
@@ -12,17 +19,30 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #1c2429;
+  color: #ffffff;
+  background: linear-gradient(180deg, #0a1628 0%, #0d1f3c 50%, #0a1628 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Subtle film grain texture overlay for depth */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #9eadb8; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #758796; }
+::-webkit-scrollbar-track { background: #0a1628; }
+::-webkit-scrollbar-thumb { background: #c9a96e; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #dfc08a; }
 
 section { scroll-margin-top: 72px; }
 
@@ -33,7 +53,7 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button { opacity: 1; height: 32px; }
 
 *:focus-visible {
-  outline: 2px solid var(--color-sea-600);
+  outline: 2px solid var(--color-gold-400);
   outline-offset: 2px;
 }
 
@@ -46,9 +66,23 @@ input[type="number"]::-webkit-outer-spin-button { opacity: 1; height: 32px; }
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
 
 .animate-fade-in-up { animation: fadeInUp 0.7s ease-out forwards; }
 .animate-float { animation: float 6s ease-in-out infinite; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+.animate-breathe { animation: breathe 4s ease-in-out infinite; }
 
 /* Glass card */
 .glass {
@@ -60,9 +94,66 @@ input[type="number"]::-webkit-outer-spin-button { opacity: 1; height: 32px; }
 
 /* CTA glow */
 .glow-coral {
-  box-shadow: 0 0 20px rgba(247, 95, 59, 0.3), 0 0 60px rgba(247, 95, 59, 0.1);
+  box-shadow: 0 0 20px rgba(223,192,138,0.3), 0 0 60px rgba(223,192,138,0.1);
+}
+
+/* Elevated card hover effect */
+.card-hover {
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px rgba(223,192,138,0.12), 0 8px 20px -8px rgba(0,0,0,0.3);
+}
+
+/* Section divider wave */
+.wave-divider {
+  position: relative;
+}
+.wave-divider::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath fill='%23f8fafb' d='M0,20 C360,60 1080,0 1440,30 L1440,0 L0,0 Z'/%3E%3C/svg%3E") no-repeat;
+  background-size: cover;
 }
 
 /* Chinese typography optimization */
 html[lang="zh"] body { letter-spacing: 0.02em; line-height: 1.8; }
 html[lang="zh"] h1, html[lang="zh"] h2, html[lang="zh"] h3 { letter-spacing: 0.04em; }
+
+/* Rich text shadow for hero headings */
+.text-shadow-hero {
+  text-shadow: 0 2px 30px rgba(0,0,0,0.5), 0 4px 60px rgba(0,0,0,0.3);
+}
+
+/* Gradient text utility — gold */
+.gradient-text {
+  background: linear-gradient(135deg, #dfc08a, #c9a96e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass card for dark theme */
+.glass {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(223, 192, 138, 0.12);
+}
+
+/* Gold gradient button */
+.btn-gold {
+  background: linear-gradient(135deg, #dfc08a 0%, #c9a96e 100%);
+  color: #0a1628;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(201,169,110,0.3);
+}
+.btn-gold:hover {
+  box-shadow: 0 6px 24px rgba(201,169,110,0.4);
+  transform: translateY(-1px);
+}

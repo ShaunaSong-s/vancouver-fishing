@@ -17,7 +17,7 @@ function buildText(booking: Booking): string {
 人数: ${booking.passengers}
 总价: $${booking.totalPrice} CAD
 定金: $${booking.deposit} CAD
-支付: ${booking.paymentMethod === 'wechat' ? '微信支付' : '信用卡'}
+支付: ${booking.paymentMethod === 'wechat' ? '微信支付' : 'E-Transfer'}
 备注: ${booking.notes || '-'}`;
 }
 
@@ -28,17 +28,17 @@ function buildHtml(booking: Booking): string {
     `<tr><td style="padding:8px 0;color:#888;width:80px">${label}</td><td style="padding:8px 0;${bold ? 'font-weight:700;' : ''}">${val}</td></tr>`;
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
-<body style="font-family:-apple-system,sans-serif;background:#f1f5f4;padding:20px">
-<div style="max-width:580px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)">
-  <div style="background:linear-gradient(135deg,#0d4f50,#22ada7);color:#fff;padding:24px;text-align:center">
-    <h1 style="margin:0;font-size:20px">🎣 新预定通知</h1>
+<body style="font-family:-apple-system,sans-serif;background:#0d1f3c;padding:20px">
+<div style="max-width:580px;margin:0 auto;background:#0a1628;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.3);border:1px solid rgba(223,192,138,0.15)">
+  <div style="background:linear-gradient(135deg,#0a1628,#0d1f3c);color:#fff;padding:24px;text-align:center;border-bottom:1px solid rgba(223,192,138,0.2)">
+    <h1 style="margin:0;font-size:20px;color:#dfc08a">🎣 新预定通知</h1>
     <p style="margin:6px 0 0;opacity:.75;font-size:13px">New Booking — ${booking.bookingId}</p>
   </div>
   <div style="padding:24px">
     <table style="width:100%;border-collapse:collapse;font-size:14px">
       ${row('姓名', booking.name, true)}
-      ${row('电话', `<a href="tel:${booking.phone}" style="color:#22ada7">${booking.phone}</a>`)}
-      ${row('邮箱', `<a href="mailto:${booking.email}" style="color:#22ada7">${booking.email}</a>`)}
+      ${row('电话', `<a href="tel:${booking.phone}" style="color:#dfc08a">${booking.phone}</a>`)}
+      ${row('邮箱', `<a href="mailto:${booking.email}" style="color:#dfc08a">${booking.email}</a>`)}
       ${row('微信', booking.wechat || 'N/A')}
       <tr><td colspan="2" style="border-top:1px solid #eee;padding:4px 0"></td></tr>
       ${row('船只', boat, true)}
@@ -46,13 +46,13 @@ function buildHtml(booking: Booking): string {
       ${row('日期', booking.date, true)}
       ${row('人数', `${booking.passengers} 人`)}
       <tr><td colspan="2" style="border-top:1px solid #eee;padding:4px 0"></td></tr>
-      ${row('总价', `<span style="font-size:18px;color:#0d4f50;font-weight:800">$${booking.totalPrice.toLocaleString()} CAD</span>`)}
+      ${row('总价', `<span style="font-size:18px;color:#dfc08a;font-weight:800">$${booking.totalPrice.toLocaleString()} CAD</span>`)}
       ${row('定金', `<span style="color:#f75f3b;font-weight:700">$${booking.deposit.toLocaleString()} CAD</span>`)}
-      ${row('支付', booking.paymentMethod === 'wechat' ? '微信支付 WeChat Pay' : '信用卡 Credit Card')}
+      ${row('支付', booking.paymentMethod === 'wechat' ? '微信支付 WeChat Pay' : 'E-Transfer')}
       ${booking.notes ? row('备注', booking.notes) : ''}
     </table>
   </div>
-  <div style="background:#f8faf9;padding:14px 24px;text-align:center;font-size:12px;color:#999">
+  <div style="background:rgba(255,255,255,0.03);padding:14px 24px;text-align:center;font-size:12px;color:rgba(255,255,255,0.4);border-top:1px solid rgba(223,192,138,0.1)">
     Top Vancouver Fishing Charter · 温哥华海尚海钓
   </div>
 </div></body></html>`;

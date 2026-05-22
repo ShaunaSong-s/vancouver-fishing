@@ -18,7 +18,7 @@ export interface BookingFormData {
   phone: string;
   email: string;
   wechat?: string;
-  paymentMethod: 'wechat' | 'credit_card' | 'e_transfer';
+  paymentMethod: 'wechat' | 'e_transfer';
   notes?: string;
 }
 

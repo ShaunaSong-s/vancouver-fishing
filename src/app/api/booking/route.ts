@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { BOATS } from '@/lib/types';
 import { addBooking } from '@/lib/bookings';
 import { notifyAdmin } from '@/lib/notify';
+import { addToCloudDB } from '@/lib/wxcloud';
 
 export async function POST(req: NextRequest) {
   try {
@@ -73,6 +74,38 @@ export async function POST(req: NextRequest) {
     };
 
     await addBooking(booking);
+
+    // Sync to WeChat mini-program cloud database
+    try {
+      const boatName = boatId === 'kingfisher' ? 'Kingfisher 3025' : 'Axopar 37';
+      await addToCloudDB('bookings', {
+        bookingId,
+        boatId,
+        boatName,
+        bookingType,
+        tripDate: date,
+        passengers: passengerCount,
+        name,
+        phone,
+        email,
+        wechatId: wechat || '',
+        wechatNote: '',
+        paymentMethod,
+        totalPrice,
+        depositAmount: deposit,
+        customerType: 'website',
+        status: 'pending',
+        notes: notes || '',
+        source: 'website',
+        createdAt: new Date().toISOString(),
+        createTime: new Date().toISOString(),
+        updateTime: new Date().toISOString(),
+      });
+      console.log(`[WxCloud] Booking ${bookingId} synced to mini-program`);
+    } catch (wxErr) {
+      // Don't fail the booking if cloud sync fails
+      console.error('[WxCloud] Sync failed:', wxErr);
+    }
 
     // Notify admin (email / console log)
     await notifyAdmin(booking);
