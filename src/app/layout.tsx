@@ -24,11 +24,11 @@ export const metadata: Metadata = {
     default: 'Top Vancouver Fishing Charter | 温哥华海钓包船 | 温哥华海尚海钓',
     template: '%s | Top Vancouver Fishing Charter',
   },
-  description: 'Top Vancouver Fishing Charter — #1 Vancouver deep sea fishing charter. Kingfisher 3025 & Axopar 37 XC, bilingual Chinese/English captains, Steveston departure. Book salmon, halibut, lingcod & crab fishing trips. All gear included. 温哥华海尚海钓，最专业海钓包船，中英文船长，Steveston出发，三文鱼、比目鱼、鳕鱼、螃蟹海钓。',
+  description: 'Top Vancouver Fishing Charter — #1 Vancouver deep sea fishing charter. Kingfisher 3025 & Axopar 37 XC, bilingual Chinese/English captains, Imperial Landing Docks departure. Book salmon, halibut, lingcod & crab fishing trips. All gear included. 温哥华海尚海铓，最专业海铓包船，中英文船长，Imperial Landing Docks出发，三文鱼、比目鱼、鳕鱼、蟃蟹海铓。',
   keywords: [
     'Vancouver fishing charter', 'Vancouver deep sea fishing', 'top vancouver fishing charter',
     'fishing charter Vancouver BC', 'salmon fishing Vancouver', 'halibut fishing Vancouver',
-    'crab fishing Vancouver', 'Steveston fishing charter', 'Richmond fishing charter',
+    'crab fishing Vancouver', 'Imperial Landing Docks fishing charter', 'Richmond fishing charter',
     'Vancouver boat charter', 'private fishing charter Vancouver', 'shared fishing trip Vancouver',
     'Chinese fishing charter Vancouver', 'bilingual fishing charter',
     'Kingfisher 3025', 'Axopar 37', 'Vancouver sport fishing',

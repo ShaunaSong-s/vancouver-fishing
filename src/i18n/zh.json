@@ -91,9 +91,9 @@
   },
   "location": {
     "title": "上船地点",
-    "subtitle": "我们在列治文渔人码头恭候您的到来",
-    "address": "列治文渔人码头 2号台",
-    "fullAddress": "Steveston Fisherman's Wharf, Dock #2, Richmond, BC",
+    "subtitle": "我们在 Imperial Landing Docks 恭候您的到来",
+    "address": "Imperial Landing Docks",
+    "fullAddress": "Imperial Landing Docks, 4310 Bayview St, Richmond, BC",
     "directions": "导航前往",
     "parking": "码头附近有充足的免费停车位",
     "arriveEarly": "请提前15分钟到达码头"
@@ -126,7 +126,7 @@
     "wechat": "微信",
     "followUs": "关注我们",
     "rights": "© 2026 温哥华海尚海钓. 保留所有权利.",
-    "address": "列治文渔人码头 2号台, BC, 加拿大"
+    "address": "Imperial Landing Docks, 4310 Bayview St, Richmond, BC"
   },
   "common": {
     "cad": "加元",

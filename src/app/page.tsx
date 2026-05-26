@@ -14,13 +14,13 @@ const jsonLd = {
   '@type': 'TouristAttraction',
   name: 'Top Vancouver Fishing Charter',
   alternateName: '温哥华海尚海钓',
-  description: 'Professional deep sea fishing charters in Vancouver, BC. Salmon, halibut, lingcod, and crab fishing trips departing from Steveston Fisherman\'s Wharf. Private charters and shared trips available.',
+  description: 'Professional deep sea fishing charters in Vancouver, BC. Salmon, halibut, lingcod, and crab fishing trips departing from Imperial Landing Docks. Private charters and shared trips available.',
   url: 'https://topfishingcharter.ca',
   telephone: '+1-778-878-8881',
   email: 'info@topfishingcharter.ca',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Steveston Imperial Landing Dock',
+    streetAddress: '4310 Bayview Street',
     addressLocality: 'Richmond',
     addressRegion: 'BC',
     addressCountry: 'CA',
@@ -61,7 +61,7 @@ const jsonLd = {
     {
       '@type': 'Offer',
       name: 'Shared Fishing Trip',
-      description: 'Join a shared fishing trip from Steveston. Full day deep sea fishing with professional captain.',
+      description: 'Join a shared fishing trip from Imperial Landing Docks. Full day deep sea fishing with professional captain.',
       price: '240',
       priceCurrency: 'CAD',
     },
@@ -115,7 +115,7 @@ const faqJsonLd = {
       name: 'Where does the fishing charter depart from?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'All trips depart from Steveston Imperial Landing Dock in Richmond, BC. Free parking is available nearby. Please arrive 5-15 minutes before departure time (typically 8:00 AM).',
+        text: 'All trips depart from Imperial Landing Docks at 4310 Bayview Street, Richmond, BC. Free parking is available nearby. Please arrive 5-15 minutes before departure time (typically 8:00 AM).',
       },
     },
     {

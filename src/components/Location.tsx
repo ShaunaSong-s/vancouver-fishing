@@ -23,14 +23,14 @@ export default function Location() {
           {/* Map */}
           <div className="lg:col-span-3 rounded-3xl overflow-hidden shadow-lg shadow-black/20 border border-gold-400/10">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2617.674204692085!2d-123.18476!3d49.12542!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5486100c2ea5e4e3%3A0x3f3b1ae6c5bf20e9!2sSteveston%20Fisherman&#39;s%20Wharf!5e0!3m2!1sen!2sca!4v1700000000000!5m2!1sen!2sca"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2617.8!2d-123.1825!3d49.1235!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x548610159b94fab3%3A0x5e9e5c5a5b5c5d5e!2sImperial%20Landing%20Docks!5e0!3m2!1sen!2sca!4v1700000000000!5m2!1sen!2sca"
               width="100%"
               height="380"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Steveston Wharf Map"
+              title="Imperial Landing Docks Map"
             />
           </div>
 
@@ -47,7 +47,7 @@ export default function Location() {
               <h3 className="text-sm font-bold text-white mb-1">{t.location.address}</h3>
               <p className="text-white/60 text-sm mb-4">{t.location.fullAddress}</p>
               <a
-                href="https://maps.google.com/?q=Steveston+Fisherman's+Wharf+Richmond+BC"
+                href="https://maps.google.com/?q=Imperial+Landing+Docks+4310+Bayview+St+Richmond+BC"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 text-sm font-semibold transition-colors"

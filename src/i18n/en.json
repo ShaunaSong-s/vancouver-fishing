@@ -91,11 +91,11 @@
   },
   "location": {
     "title": "Boarding Location",
-    "subtitle": "We'll be waiting for you at Steveston Fisherman's Wharf",
-    "address": "Steveston Fisherman's Wharf, Dock #2",
-    "fullAddress": "Steveston Fisherman's Wharf, Dock #2, Richmond, BC",
+    "subtitle": "We'll be waiting for you at Imperial Landing Docks",
+    "address": "Imperial Landing Docks",
+    "fullAddress": "Imperial Landing Docks, 4310 Bayview St, Richmond, BC",
     "directions": "Get Directions",
-    "parking": "Ample free parking available near the wharf",
+    "parking": "Ample free parking available nearby",
     "arriveEarly": "Please arrive 15 minutes before departure"
   },
   "policy": {
@@ -126,7 +126,7 @@
     "wechat": "WeChat",
     "followUs": "Follow Us",
     "rights": "© 2026 Top Vancouver Fishing Charter. All rights reserved.",
-    "address": "Steveston Fisherman's Wharf, Dock #2, Richmond, BC, Canada"
+    "address": "Imperial Landing Docks, 4310 Bayview St, Richmond, BC, Canada"
   },
   "common": {
     "cad": "CAD",
