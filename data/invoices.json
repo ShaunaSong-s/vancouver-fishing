@@ -1,0 +1,18 @@
+[
+  {
+    "id": "inv_1781245105895_6gho6x",
+    "invoiceNumber": "INV-2026-0002",
+    "createdAt": "2026-06-12T06:18:25.895Z",
+    "status": "paid",
+    "customerName": "ICEWOLF",
+    "customerEmail": "",
+    "customerPhone": "",
+    "description": "Trip",
+    "amount": 2000,
+    "date": "2026-06-11",
+    "taxRate": 0.05,
+    "taxAmount": 100,
+    "total": 2100,
+    "notes": ""
+  }
+]

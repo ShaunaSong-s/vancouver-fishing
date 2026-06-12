@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { jsPDF } from 'jspdf';
 
 interface Booking {
   bookingId: string;
@@ -135,6 +136,109 @@ export default function AdminPage() {
     await fetchInvoices();
   };
 
+  const downloadInvoice = async (inv: Invoice) => {
+    const pdf = new jsPDF();
+
+    // Load logo
+    try {
+      const logoRes = await fetch('/logo-small.png');
+      const logoBlob = await logoRes.blob();
+      const logoData = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(logoBlob);
+      });
+      pdf.addImage(logoData, 'PNG', 10, 8, 20, 20);
+    } catch { /* skip logo if not available */ }
+
+    // Header
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Top Vancouver Fishing Charter Inc.', 105, 18, { align: 'center' });
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Georgia Strait | Steveston, BC, Canada', 105, 25, { align: 'center' });
+    pdf.setDrawColor(37, 99, 235);
+    pdf.setLineWidth(0.5);
+    pdf.line(10, 32, 200, 32);
+
+    // Invoice title
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(`INVOICE  ${inv.invoiceNumber}`, 10, 42);
+
+    // Date & status
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`Date: ${inv.date}`, 10, 50);
+    pdf.text(`Status: ${inv.status.toUpperCase()}`, 200, 50, { align: 'right' });
+
+    // Bill To
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Bill To:', 10, 62);
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    let y = 68;
+    pdf.text(inv.customerName, 12, y); y += 5;
+    if (inv.customerEmail) { pdf.text(inv.customerEmail, 12, y); y += 5; }
+    if (inv.customerPhone) { pdf.text(inv.customerPhone, 12, y); y += 5; }
+    y += 10;
+
+    // Table header
+    pdf.setFillColor(230, 240, 250);
+    pdf.rect(10, y - 5, 130, 8, 'F');
+    pdf.rect(140, y - 5, 60, 8, 'F');
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(10);
+    pdf.text('Description', 12, y);
+    pdf.text('Amount', 195, y, { align: 'right' });
+    y += 3;
+    pdf.line(10, y, 200, y);
+    y += 7;
+
+    // Table row
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(inv.description, 12, y);
+    pdf.text(`$${inv.amount.toFixed(2)}`, 195, y, { align: 'right' });
+    y += 3;
+    pdf.setDrawColor(200, 200, 200);
+    pdf.line(10, y, 200, y);
+    y += 12;
+
+    // Totals
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Subtotal:', 155, y, { align: 'right' });
+    pdf.text(`$${inv.amount.toFixed(2)}`, 195, y, { align: 'right' });
+    y += 7;
+    pdf.text(`GST (${(inv.taxRate * 100).toFixed(0)}%):`, 155, y, { align: 'right' });
+    pdf.text(`$${inv.taxAmount.toFixed(2)}`, 195, y, { align: 'right' });
+    y += 8;
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(12);
+    pdf.text('TOTAL:', 155, y, { align: 'right' });
+    pdf.text(`$${inv.total.toFixed(2)} CAD`, 195, y, { align: 'right' });
+
+    // Notes
+    if (inv.notes) {
+      y += 15;
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Notes:', 10, y);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+      pdf.text(inv.notes, 10, y + 6);
+    }
+
+    // Footer
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'italic');
+    pdf.text('Thank you for choosing Top Vancouver Fishing Charter Inc.!', 105, 272, { align: 'center' });
+    pdf.text('Payment: E-Transfer to info@topfishingcharter.ca', 105, 277, { align: 'center' });
+
+    pdf.save(`${inv.invoiceNumber}.pdf`);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthed(true);
@@ -200,7 +304,7 @@ export default function AdminPage() {
   // Login screen
   if (!authed) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center p-4">
         <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-sm">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -218,7 +322,7 @@ export default function AdminPage() {
             onChange={e => setPassword(e.target.value)}
             placeholder="请输入管理密码"
             required
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900 bg-white"
           />
           <button
             type="submit"
@@ -232,7 +336,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
@@ -399,6 +503,8 @@ export default function AdminPage() {
                               <button onClick={() => updateInvoiceStatus(inv.id, 'cancelled')}
                                 className="px-2 py-1 text-xs bg-gray-50 text-gray-500 rounded hover:bg-red-50 hover:text-red-500">取消</button>
                             )}
+                            <button onClick={() => downloadInvoice(inv)}
+                              className="px-2 py-1 text-xs bg-purple-50 text-purple-600 rounded hover:bg-purple-100">下载</button>
                             <button onClick={() => deleteInvoiceItem(inv.id)}
                               className="px-2 py-1 text-xs bg-gray-50 text-gray-400 rounded hover:bg-red-50 hover:text-red-500">🗑</button>
                           </div>
