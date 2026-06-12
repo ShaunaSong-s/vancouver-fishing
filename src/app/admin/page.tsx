@@ -109,6 +109,40 @@ export default function AdminPage() {
   }, [password]);
 
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [scanning, setScanning] = useState(false);
+
+  const scanReceipt = async (file: File) => {
+    setScanning(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/admin/ocr', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${password}` },
+        body: formData,
+      });
+      if (res.ok) {
+        const { result } = await res.json();
+        setBkForm(prev => ({
+          ...prev,
+          date: result.date || prev.date,
+          amount: result.amount ? String(result.amount) : prev.amount,
+          description: result.description || (result.merchant ? `${result.merchant} - ${result.description}` : prev.description),
+          category: result.category || prev.category,
+          paymentMethod: result.paymentMethod || prev.paymentMethod,
+          type: ['Charter Revenue', 'Shared Trip Revenue', 'Tips', 'Merchandise', 'Other Income'].includes(result.category) ? 'income' : 'expense',
+        }));
+      }
+    } catch { /* ignore scan errors */ }
+    setScanning(false);
+  };
+
+  const handleReceiptSelect = (file: File | null) => {
+    setReceiptFile(file);
+    if (file && file.type.startsWith('image/')) {
+      scanReceipt(file);
+    }
+  };
 
   const compressImage = (file: File): Promise<Blob> => {
     return new Promise((resolve) => {
@@ -721,11 +755,14 @@ export default function AdminPage() {
                 </div>
                 <div className="flex items-center gap-4">
                   <label className="flex items-center gap-2 cursor-pointer px-4 py-2 border border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors">
-                    <span className="text-sm text-gray-600">📎 {receiptFile ? receiptFile.name : '上传小票/收据'}</span>
-                    <input type="file" accept="image/*,.pdf" className="hidden" onChange={e => setReceiptFile(e.target.files?.[0] || null)} />
+                    <span className="text-sm text-gray-600">📎 {receiptFile ? receiptFile.name : '上传小票/收据（自动识别）'}</span>
+                    <input type="file" accept="image/*,.pdf" className="hidden" onChange={e => handleReceiptSelect(e.target.files?.[0] || null)} />
                   </label>
                   {receiptFile && (
                     <button type="button" onClick={() => setReceiptFile(null)} className="text-xs text-red-500 hover:text-red-700">✕ 移除</button>
+                  )}
+                  {scanning && (
+                    <span className="text-sm text-blue-600 animate-pulse">🔍 AI 识别中...</span>
                   )}
                 </div>
                 <button type="submit" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
