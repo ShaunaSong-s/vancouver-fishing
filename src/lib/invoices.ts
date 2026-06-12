@@ -1,5 +1,5 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { sql } from '@vercel/postgres';
+import { ensureDb } from './db';
 
 export interface Invoice {
   id: string;
@@ -18,41 +18,35 @@ export interface Invoice {
   notes?: string;
 }
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const INVOICES_FILE = path.join(DATA_DIR, 'invoices.json');
-
-async function ensureDataDir() {
-  try {
-    await fs.access(DATA_DIR);
-  } catch {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  }
-}
-
-async function readInvoices(): Promise<Invoice[]> {
-  await ensureDataDir();
-  try {
-    const data = await fs.readFile(INVOICES_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-async function writeInvoices(invoices: Invoice[]): Promise<void> {
-  await ensureDataDir();
-  await fs.writeFile(INVOICES_FILE, JSON.stringify(invoices, null, 2));
-}
-
-function generateInvoiceNumber(invoices: Invoice[]): string {
+async function generateInvoiceNumber(): Promise<string> {
   const year = new Date().getFullYear();
-  const yearInvoices = invoices.filter(i => i.invoiceNumber.startsWith(`INV-${year}`));
-  const seq = yearInvoices.length + 1;
+  const result = await sql`
+    SELECT COUNT(*) as count FROM invoices 
+    WHERE invoice_number LIKE ${`INV-${year}%`}
+  `;
+  const seq = Number(result.rows[0].count) + 1;
   return `INV-${year}-${String(seq).padStart(4, '0')}`;
 }
 
 export async function getAllInvoices(): Promise<Invoice[]> {
-  return readInvoices();
+  await ensureDb();
+  const result = await sql`SELECT * FROM invoices ORDER BY created_at DESC`;
+  return result.rows.map(row => ({
+    id: row.id,
+    invoiceNumber: row.invoice_number,
+    createdAt: row.created_at,
+    status: row.status,
+    customerName: row.customer_name,
+    customerEmail: row.customer_email,
+    customerPhone: row.customer_phone,
+    description: row.description,
+    amount: Number(row.amount),
+    date: row.date,
+    taxRate: Number(row.tax_rate),
+    taxAmount: Number(row.tax_amount),
+    total: Number(row.total),
+    notes: row.notes,
+  }));
 }
 
 export interface CreateInvoiceInput {
@@ -66,14 +60,21 @@ export interface CreateInvoiceInput {
 }
 
 export async function createInvoice(input: CreateInvoiceInput): Promise<Invoice> {
-  const invoices = await readInvoices();
+  await ensureDb();
   const taxRate = 0.05;
   const taxAmount = Math.round(input.amount * taxRate * 100) / 100;
   const total = Math.round((input.amount + taxAmount) * 100) / 100;
+  const id = `inv_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const invoiceNumber = await generateInvoiceNumber();
 
-  const invoice: Invoice = {
-    id: `inv_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-    invoiceNumber: generateInvoiceNumber(invoices),
+  await sql`
+    INSERT INTO invoices (id, invoice_number, status, customer_name, customer_email, customer_phone, description, amount, date, tax_rate, tax_amount, total, notes)
+    VALUES (${id}, ${invoiceNumber}, 'draft', ${input.customerName}, ${input.customerEmail || null}, ${input.customerPhone || null}, ${input.description}, ${input.amount}, ${input.date}, ${taxRate}, ${taxAmount}, ${total}, ${input.notes || null})
+  `;
+
+  return {
+    id,
+    invoiceNumber,
     createdAt: new Date().toISOString(),
     status: 'draft',
     customerName: input.customerName,
@@ -87,25 +88,36 @@ export async function createInvoice(input: CreateInvoiceInput): Promise<Invoice>
     total,
     notes: input.notes,
   };
-
-  invoices.push(invoice);
-  await writeInvoices(invoices);
-  return invoice;
 }
 
 export async function updateInvoiceStatus(id: string, status: Invoice['status']): Promise<Invoice | null> {
-  const invoices = await readInvoices();
-  const idx = invoices.findIndex(i => i.id === id);
-  if (idx === -1) return null;
-  invoices[idx].status = status;
-  await writeInvoices(invoices);
-  return invoices[idx];
+  await ensureDb();
+  const result = await sql`
+    UPDATE invoices SET status = ${status} WHERE id = ${id} RETURNING *
+  `;
+  if (result.rows.length === 0) return null;
+  const row = result.rows[0];
+  return {
+    id: row.id,
+    invoiceNumber: row.invoice_number,
+    createdAt: row.created_at,
+    status: row.status,
+    customerName: row.customer_name,
+    customerEmail: row.customer_email,
+    customerPhone: row.customer_phone,
+    description: row.description,
+    amount: Number(row.amount),
+    date: row.date,
+    taxRate: Number(row.tax_rate),
+    taxAmount: Number(row.tax_amount),
+    total: Number(row.total),
+    notes: row.notes,
+  };
 }
 
 export async function deleteInvoice(id: string): Promise<boolean> {
-  const invoices = await readInvoices();
-  const filtered = invoices.filter(i => i.id !== id);
-  if (filtered.length === invoices.length) return false;
-  await writeInvoices(filtered);
-  return true;
+  await ensureDb();
+  const result = await sql`DELETE FROM invoices WHERE id = ${id}`;
+  return (result.rowCount ?? 0) > 0;
 }
+

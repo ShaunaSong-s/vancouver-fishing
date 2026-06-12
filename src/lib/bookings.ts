@@ -1,5 +1,5 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { sql } from '@vercel/postgres';
+import { ensureDb } from './db';
 
 export interface Booking {
   bookingId: string;
@@ -20,58 +20,53 @@ export interface Booking {
   createdAt: string;
 }
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
-
-async function ensureDataDir() {
-  try {
-    await fs.access(DATA_DIR);
-  } catch {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  }
-}
-
-async function readBookings(): Promise<Booking[]> {
-  await ensureDataDir();
-  try {
-    const data = await fs.readFile(BOOKINGS_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-async function writeBookings(bookings: Booking[]) {
-  await ensureDataDir();
-  await fs.writeFile(BOOKINGS_FILE, JSON.stringify(bookings, null, 2), 'utf-8');
+function rowToBooking(row: Record<string, unknown>): Booking {
+  return {
+    bookingId: row.booking_id as string,
+    boatId: row.boat_id as string,
+    bookingType: row.booking_type as string,
+    date: row.date as string,
+    passengers: Number(row.passengers),
+    name: row.name as string,
+    phone: row.phone as string,
+    email: row.email as string,
+    wechat: row.wechat as string | undefined,
+    paymentMethod: row.payment_method as string,
+    totalPrice: Number(row.total_price),
+    deposit: Number(row.deposit),
+    lang: (row.lang as string) || 'zh',
+    notes: row.notes as string | undefined,
+    status: row.status as Booking['status'],
+    createdAt: row.created_at as string,
+  };
 }
 
 export async function addBooking(booking: Booking): Promise<void> {
-  const bookings = await readBookings();
-  bookings.unshift(booking);
-  await writeBookings(bookings);
+  await ensureDb();
+  await sql`
+    INSERT INTO bookings (booking_id, boat_id, booking_type, date, passengers, name, phone, email, wechat, payment_method, total_price, deposit, lang, notes, status)
+    VALUES (${booking.bookingId}, ${booking.boatId}, ${booking.bookingType}, ${booking.date}, ${booking.passengers}, ${booking.name}, ${booking.phone}, ${booking.email}, ${booking.wechat || null}, ${booking.paymentMethod}, ${booking.totalPrice}, ${booking.deposit}, ${booking.lang || 'zh'}, ${booking.notes || null}, ${booking.status || 'pending'})
+  `;
 }
 
 export async function getAllBookings(): Promise<Booking[]> {
-  return readBookings();
+  await ensureDb();
+  const result = await sql`SELECT * FROM bookings ORDER BY created_at DESC`;
+  return result.rows.map(rowToBooking);
 }
 
 export async function updateBookingStatus(
   bookingId: string,
   status: Booking['status']
 ): Promise<boolean> {
-  const bookings = await readBookings();
-  const idx = bookings.findIndex(b => b.bookingId === bookingId);
-  if (idx === -1) return false;
-  bookings[idx].status = status;
-  await writeBookings(bookings);
-  return true;
+  await ensureDb();
+  const result = await sql`UPDATE bookings SET status = ${status} WHERE booking_id = ${bookingId}`;
+  return (result.rowCount ?? 0) > 0;
 }
 
 export async function deleteBooking(bookingId: string): Promise<boolean> {
-  const bookings = await readBookings();
-  const filtered = bookings.filter(b => b.bookingId !== bookingId);
-  if (filtered.length === bookings.length) return false;
-  await writeBookings(filtered);
-  return true;
+  await ensureDb();
+  const result = await sql`DELETE FROM bookings WHERE booking_id = ${bookingId}`;
+  return (result.rowCount ?? 0) > 0;
 }
+

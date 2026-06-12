@@ -58,13 +58,77 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'cancelled'>('all');
-  const [activeTab, setActiveTab] = useState<'bookings' | 'invoices'>('bookings');
+  const [activeTab, setActiveTab] = useState<'bookings' | 'invoices' | 'bookkeeping'>('bookings');
 
   // Invoice form state
   const [invoiceForm, setInvoiceForm] = useState({
     customerName: '', customerEmail: '', customerPhone: '',
     description: '', amount: '', date: '', notes: '',
   });
+
+  // Bookkeeping state
+  interface BkEntry {
+    id: string; createdAt: string; date: string; type: 'income' | 'expense';
+    category: string; amount: number; description: string;
+    paymentMethod?: string; reference?: string; notes?: string;
+  }
+  const [bkEntries, setBkEntries] = useState<BkEntry[]>([]);
+  const [bkForm, setBkForm] = useState({
+    date: '', type: 'expense' as 'income' | 'expense', category: '',
+    amount: '', description: '', paymentMethod: '', reference: '', notes: '',
+  });
+  const [bkSummary, setBkSummary] = useState<{ month: string; totalIncome: number; totalExpense: number; net: number; byCategory: { category: string; amount: number }[] } | null>(null);
+
+  const INCOME_CATS = ['Charter Revenue', 'Shared Trip Revenue', 'Tips', 'Merchandise', 'Other Income'];
+  const EXPENSE_CATS = ['Fuel', 'Boat Maintenance', 'Dock Fees', 'Insurance', 'Fishing Gear', 'Bait & Tackle', 'License & Permits', 'Marketing', 'Staff Wages', 'Food & Beverages', 'Office & Admin', 'Other Expense'];
+
+  const fetchBkEntries = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/bookkeeping', {
+        headers: { Authorization: `Bearer ${password}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBkEntries(data.entries || []);
+      }
+    } catch { /* ignore */ }
+  }, [password]);
+
+  const fetchBkSummary = useCallback(async () => {
+    const now = new Date();
+    try {
+      const res = await fetch(`/api/admin/bookkeeping?year=${now.getFullYear()}&month=${now.getMonth() + 1}`, {
+        headers: { Authorization: `Bearer ${password}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBkSummary(data.summary);
+      }
+    } catch { /* ignore */ }
+  }, [password]);
+
+  const createBkEntry = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await fetch('/api/admin/bookkeeping', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${password}` },
+      body: JSON.stringify({ ...bkForm, amount: Number(bkForm.amount) }),
+    });
+    setBkForm({ date: '', type: 'expense', category: '', amount: '', description: '', paymentMethod: '', reference: '', notes: '' });
+    await fetchBkEntries();
+    await fetchBkSummary();
+  };
+
+  const deleteBkEntry = async (id: string) => {
+    if (!confirm('确定删除此记录？')) return;
+    await fetch('/api/admin/bookkeeping', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${password}` },
+      body: JSON.stringify({ id }),
+    });
+    await fetchBkEntries();
+    await fetchBkSummary();
+  };
 
   const fetchBookings = useCallback(async () => {
     setLoading(true);
@@ -249,10 +313,12 @@ export default function AdminPage() {
     if (authed) {
       fetchBookings();
       fetchInvoices();
-      const interval = setInterval(() => { fetchBookings(); fetchInvoices(); }, 30000);
+      fetchBkEntries();
+      fetchBkSummary();
+      const interval = setInterval(() => { fetchBookings(); fetchInvoices(); fetchBkEntries(); }, 30000);
       return () => clearInterval(interval);
     }
-  }, [authed, fetchBookings, fetchInvoices]);
+  }, [authed, fetchBookings, fetchInvoices, fetchBkEntries, fetchBkSummary]);
 
   const updateStatus = async (bookingId: string, status: string) => {
     try {
@@ -385,6 +451,14 @@ export default function AdminPage() {
           >
             🧾 发票管理
           </button>
+          <button
+            onClick={() => setActiveTab('bookkeeping')}
+            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'bookkeeping' ? 'bg-white text-blue-700 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            📊 记账
+          </button>
         </div>
 
         {activeTab === 'invoices' ? (
@@ -516,6 +590,114 @@ export default function AdminPage() {
               )}
             </div>
             <p className="text-xs text-gray-400 mt-4">Payment: E-Transfer to info@topfishingcharter.ca</p>
+          </>
+        ) : activeTab === 'bookkeeping' ? (
+          <>
+            {/* Monthly Summary */}
+            {bkSummary && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-green-50 rounded-xl p-4 border border-green-100">
+                  <div className="text-2xl font-bold text-green-700">${bkSummary.totalIncome.toLocaleString()}</div>
+                  <div className="text-xs text-green-600 mt-1">本月收入</div>
+                </div>
+                <div className="bg-red-50 rounded-xl p-4 border border-red-100">
+                  <div className="text-2xl font-bold text-red-700">${bkSummary.totalExpense.toLocaleString()}</div>
+                  <div className="text-xs text-red-600 mt-1">本月支出</div>
+                </div>
+                <div className={`rounded-xl p-4 border ${bkSummary.net >= 0 ? 'bg-blue-50 border-blue-100' : 'bg-orange-50 border-orange-100'}`}>
+                  <div className={`text-2xl font-bold ${bkSummary.net >= 0 ? 'text-blue-700' : 'text-orange-700'}`}>${bkSummary.net.toLocaleString()}</div>
+                  <div className="text-xs text-gray-600 mt-1">净利润</div>
+                </div>
+                <div className="bg-white rounded-xl p-4 border border-gray-100">
+                  <div className="text-2xl font-bold text-gray-900">{bkEntries.length}</div>
+                  <div className="text-xs text-gray-500 mt-1">总记录</div>
+                </div>
+              </div>
+            )}
+
+            {/* Add Entry Form */}
+            <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">添加记录</h2>
+              <form onSubmit={createBkEntry} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <input type="date" required value={bkForm.date} onChange={e => setBkForm({...bkForm, date: e.target.value})}
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                  <select value={bkForm.type} onChange={e => setBkForm({...bkForm, type: e.target.value as 'income' | 'expense', category: ''})}
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                    <option value="expense">📉 支出</option>
+                    <option value="income">📈 收入</option>
+                  </select>
+                  <select required value={bkForm.category} onChange={e => setBkForm({...bkForm, category: e.target.value})}
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                    <option value="">选择分类...</option>
+                    {(bkForm.type === 'income' ? INCOME_CATS : EXPENSE_CATS).map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <input type="number" step="0.01" required placeholder="金额" value={bkForm.amount} onChange={e => setBkForm({...bkForm, amount: e.target.value})}
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <input type="text" required placeholder="描述" value={bkForm.description} onChange={e => setBkForm({...bkForm, description: e.target.value})}
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                  <input type="text" placeholder="支付方式 (可选)" value={bkForm.paymentMethod} onChange={e => setBkForm({...bkForm, paymentMethod: e.target.value})}
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                  <input type="text" placeholder="参考号/备注 (可选)" value={bkForm.notes} onChange={e => setBkForm({...bkForm, notes: e.target.value})}
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
+                </div>
+                <button type="submit" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                  ➕ 添加记录
+                </button>
+              </form>
+            </div>
+
+            {/* Entries Table */}
+            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+              <h3 className="text-lg font-bold text-gray-900 p-4 border-b border-gray-100">记录列表</h3>
+              {bkEntries.length === 0 ? (
+                <div className="p-12 text-center text-gray-400">暂无记录</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+                      <tr>
+                        <th className="px-4 py-3 text-left">日期</th>
+                        <th className="px-4 py-3 text-left">类型</th>
+                        <th className="px-4 py-3 text-left">分类</th>
+                        <th className="px-4 py-3 text-left">描述</th>
+                        <th className="px-4 py-3 text-right">金额</th>
+                        <th className="px-4 py-3 text-left">支付方式</th>
+                        <th className="px-4 py-3 text-center">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {bkEntries.map(entry => (
+                        <tr key={entry.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3">{entry.date}</td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              entry.type === 'income' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                            }`}>
+                              {entry.type === 'income' ? '收入' : '支出'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">{entry.category}</td>
+                          <td className="px-4 py-3">{entry.description}</td>
+                          <td className={`px-4 py-3 text-right font-semibold ${entry.type === 'income' ? 'text-green-700' : 'text-red-700'}`}>
+                            {entry.type === 'income' ? '+' : '-'}${entry.amount.toFixed(2)}
+                          </td>
+                          <td className="px-4 py-3 text-gray-500">{entry.paymentMethod || '-'}</td>
+                          <td className="px-4 py-3 text-center">
+                            <button onClick={() => deleteBkEntry(entry.id)}
+                              className="px-2 py-1 text-xs bg-gray-50 text-gray-400 rounded hover:bg-red-50 hover:text-red-500">🗑</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </>
         ) : (
         <>
