@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { jsPDF } from 'jspdf';
+import * as XLSX from 'xlsx';
 
 interface Booking {
   bookingId: string;
@@ -148,6 +149,37 @@ export default function AdminPage() {
     });
     await fetchBkEntries();
     await fetchBkSummary();
+  };
+
+  const exportToExcel = () => {
+    const data = bkEntries.map(e => ({
+      '日期': e.date,
+      '类型': e.type === 'income' ? '收入' : '支出',
+      '分类': e.category,
+      '描述': e.description,
+      '金额': e.amount,
+      '支付方式': e.paymentMethod || '',
+      '备注': e.notes || '',
+      '凭证链接': e.receiptUrl || '',
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '记账明细');
+
+    // Add summary sheet
+    if (bkSummary) {
+      const summaryData = [
+        { '项目': '月份', '金额': bkSummary.month },
+        { '项目': '总收入', '金额': bkSummary.totalIncome },
+        { '项目': '总支出', '金额': bkSummary.totalExpense },
+        { '项目': '净利润', '金额': bkSummary.net },
+        ...bkSummary.byCategory.map(c => ({ '项目': c.category, '金额': c.amount })),
+      ];
+      const ws2 = XLSX.utils.json_to_sheet(summaryData);
+      XLSX.utils.book_append_sheet(wb, ws2, '月度汇总');
+    }
+
+    XLSX.writeFile(wb, `记账_${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 
   const fetchBookings = useCallback(async () => {
@@ -682,7 +714,12 @@ export default function AdminPage() {
 
             {/* Entries Table */}
             <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-              <h3 className="text-lg font-bold text-gray-900 p-4 border-b border-gray-100">记录列表</h3>
+              <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900">记录列表</h3>
+                <button onClick={exportToExcel} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+                  📥 导出 Excel
+                </button>
+              </div>
               {bkEntries.length === 0 ? (
                 <div className="p-12 text-center text-gray-400">暂无记录</div>
               ) : (
