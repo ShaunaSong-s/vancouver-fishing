@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+data/chromadb/
+data/invoices.db
+data/invoices.db-shm
+data/invoices.db-wal
+data/invoices/*.pdf
+*.egg-info/
+dist/
+build/

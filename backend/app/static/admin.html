@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Vancouver Fishing Charter - Invoice Admin</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; color: #333; }
+        .header { background: #1a5276; color: white; padding: 20px 30px; }
+        .header h1 { font-size: 22px; }
+        .header p { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 25px; margin-bottom: 25px; }
+        .card h2 { font-size: 18px; margin-bottom: 15px; color: #1a5276; }
+        .form-row { display: flex; gap: 15px; margin-bottom: 12px; }
+        .form-row > div { flex: 1; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #555; }
+        input, textarea { width: 100%; padding: 9px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+        input:focus, textarea:focus { outline: none; border-color: #1a5276; box-shadow: 0 0 0 2px rgba(26,82,118,0.1); }
+        textarea { resize: vertical; min-height: 60px; }
+        .btn { padding: 10px 22px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: #1a5276; color: white; }
+        .btn-primary:hover { background: #154360; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-success:hover { background: #219a52; }
+        .btn-sm { padding: 6px 14px; font-size: 12px; }
+        .btn-danger { background: #e74c3c; color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 13px; }
+        th { background: #f8f9fa; font-weight: 600; color: #555; }
+        .status-badge { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .status-draft { background: #fef3cd; color: #856404; }
+        .status-sent { background: #cce5ff; color: #004085; }
+        .status-paid { background: #d4edda; color: #155724; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+        .actions { display: flex; gap: 6px; }
+        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; background: #27ae60; color: white; border-radius: 8px; font-size: 14px; display: none; z-index: 999; }
+        .toast.error { background: #e74c3c; }
+        .amount-display { font-size: 13px; color: #666; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <img src="/static/logo.png" alt="Logo" style="width:40px;height:40px;border-radius:8px;">
+                <div>
+                    <h1>🐟 Top Vancouver Fishing Charter Inc.</h1>
+                    <p>Invoice Management System</p>
+                </div>
+            </div>
+            <button onclick="doLogout()" style="padding:6px 16px;background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.4);border-radius:6px;cursor:pointer;font-size:13px;">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Create Invoice -->
+        <div class="card">
+            <h2>Create New Invoice</h2>
+            <form id="invoiceForm">
+                <div class="form-row">
+                    <div>
+                        <label>Customer Name *</label>
+                        <input type="text" id="customerName" required placeholder="e.g. John Smith">
+                    </div>
+                    <div>
+                        <label>Email</label>
+                        <input type="email" id="customerEmail" placeholder="john@example.com">
+                    </div>
+                    <div>
+                        <label>Phone</label>
+                        <input type="tel" id="customerPhone" placeholder="604-555-1234">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div style="flex:2">
+                        <label>Description *</label>
+                        <input type="text" id="description" required placeholder="e.g. Full day fishing charter - July 15">
+                    </div>
+                    <div>
+                        <label>Amount (CAD) *</label>
+                        <input type="number" id="amount" required step="0.01" min="0" placeholder="1200.00">
+                    </div>
+                    <div>
+                        <label>Date *</label>
+                        <input type="date" id="invoiceDate" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label>Notes</label>
+                        <textarea id="notes" placeholder="Optional notes for the customer..."></textarea>
+                    </div>
+                </div>
+                <div class="amount-display" id="totalPreview"></div>
+                <br>
+                <button type="submit" class="btn btn-primary">Create Invoice</button>
+            </form>
+        </div>
+
+        <!-- Invoice List -->
+        <div class="card">
+            <h2>Invoices</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Customer</th>
+                        <th>Description</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="invoiceTable">
+                    <tr><td colspan="6" style="text-align:center;color:#999;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API = '/api/v1/admin';
+
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast' + (isError ? ' error' : '');
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        // Live total preview
+        document.getElementById('amount').addEventListener('input', (e) => {
+            const amt = parseFloat(e.target.value) || 0;
+            const tax = (amt * 0.05).toFixed(2);
+            const total = (amt * 1.05).toFixed(2);
+            document.getElementById('totalPreview').textContent = amt > 0 
+                ? `Subtotal: $${amt.toFixed(2)} + GST 5%: $${tax} = Total: $${total}` : '';
+        });
+
+        // Create invoice
+        document.getElementById('invoiceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const body = {
+                customer: {
+                    name: document.getElementById('customerName').value,
+                    email: document.getElementById('customerEmail').value || null,
+                    phone: document.getElementById('customerPhone').value || null,
+                },
+                description: document.getElementById('description').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                date: document.getElementById('invoiceDate').value,
+                notes: document.getElementById('notes').value || null,
+            };
+
+            const res = await fetch(`${API}/invoices`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+
+            if (res.ok) {
+                const inv = await res.json();
+                showToast(`Invoice ${inv.invoice_number} created!`);
+                document.getElementById('invoiceForm').reset();
+                document.getElementById('totalPreview').textContent = '';
+                loadInvoices();
+            } else {
+                showToast('Failed to create invoice', true);
+            }
+        });
+
+        // Load invoices
+        async function loadInvoices() {
+            const res = await fetch(`${API}/invoices`);
+            const invoices = await res.json();
+            const tbody = document.getElementById('invoiceTable');
+
+            if (invoices.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;">No invoices yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = invoices.map(inv => `
+                <tr>
+                    <td><strong>${inv.invoice_number}</strong></td>
+                    <td>${inv.customer.name}</td>
+                    <td>${inv.description}</td>
+                    <td>$${inv.total.toFixed(2)}</td>
+                    <td><span class="status-badge status-${inv.status}">${inv.status}</span></td>
+                    <td class="actions">
+                        <button class="btn btn-success btn-sm" onclick="generatePdf('${inv.id}')">PDF</button>
+                        <button class="btn btn-primary btn-sm" onclick="markPaid('${inv.id}')">Paid</button>
+                        <button class="btn btn-danger btn-sm" onclick="cancelInvoice('${inv.id}')">Cancel</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Generate & download PDF
+        async function generatePdf(id) {
+            const res = await fetch(`${API}/invoices/${id}/pdf`, { method: 'POST' });
+            if (res.ok) {
+                window.open(`${API}/invoices/${id}/download`, '_blank');
+                showToast('PDF generated!');
+            } else {
+                showToast('Failed to generate PDF', true);
+            }
+        }
+
+        // Mark as paid
+        async function markPaid(id) {
+            await fetch(`${API}/invoices/${id}/status?status=paid`, { method: 'PATCH' });
+            showToast('Marked as paid');
+            loadInvoices();
+        }
+
+        // Cancel invoice
+        async function cancelInvoice(id) {
+            if (!confirm('Cancel this invoice?')) return;
+            await fetch(`${API}/invoices/${id}/status?status=cancelled`, { method: 'PATCH' });
+            showToast('Invoice cancelled');
+            loadInvoices();
+        }
+
+        // Logout
+        async function doLogout() {
+            await fetch('/api/v1/auth/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+
+        // Initial load
+        loadInvoices();
+    </script>
+</body>
+</html>

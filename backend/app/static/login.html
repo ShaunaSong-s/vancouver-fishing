@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Top Vancouver Fishing Charter</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 40px; width: 380px; text-align: center; }
+        .login-card img { width: 60px; height: 60px; border-radius: 12px; margin-bottom: 15px; }
+        .login-card h1 { font-size: 20px; color: #1a5276; margin-bottom: 5px; }
+        .login-card p { font-size: 13px; color: #888; margin-bottom: 25px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px; }
+        input { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        input:focus { outline: none; border-color: #1a5276; box-shadow: 0 0 0 2px rgba(26,82,118,0.1); }
+        .btn { width: 100%; padding: 12px; background: #1a5276; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn:hover { background: #154360; }
+        .error { color: #e74c3c; font-size: 13px; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <img src="/static/logo.png" alt="Logo">
+        <h1>Top Vancouver Fishing Charter</h1>
+        <p>Admin Login</p>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <div class="error" id="error">Invalid username or password</div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const res = await fetch('/api/v1/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value,
+                }),
+            });
+            if (res.ok) {
+                window.location.href = '/admin';
+            } else {
+                document.getElementById('error').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
