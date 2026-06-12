@@ -70,7 +70,7 @@ export default function AdminPage() {
   interface BkEntry {
     id: string; createdAt: string; date: string; type: 'income' | 'expense';
     category: string; amount: number; description: string;
-    paymentMethod?: string; reference?: string; notes?: string;
+    paymentMethod?: string; reference?: string; receiptUrl?: string; notes?: string;
   }
   const [bkEntries, setBkEntries] = useState<BkEntry[]>([]);
   const [bkForm, setBkForm] = useState({
@@ -107,14 +107,34 @@ export default function AdminPage() {
     } catch { /* ignore */ }
   }, [password]);
 
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
+
   const createBkEntry = async (e: React.FormEvent) => {
     e.preventDefault();
+    let receiptUrl = '';
+
+    // Upload receipt if provided
+    if (receiptFile) {
+      const formData = new FormData();
+      formData.append('file', receiptFile);
+      const uploadRes = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${password}` },
+        body: formData,
+      });
+      if (uploadRes.ok) {
+        const data = await uploadRes.json();
+        receiptUrl = data.url;
+      }
+    }
+
     await fetch('/api/admin/bookkeeping', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${password}` },
-      body: JSON.stringify({ ...bkForm, amount: Number(bkForm.amount) }),
+      body: JSON.stringify({ ...bkForm, amount: Number(bkForm.amount), receiptUrl }),
     });
     setBkForm({ date: '', type: 'expense', category: '', amount: '', description: '', paymentMethod: '', reference: '', notes: '' });
+    setReceiptFile(null);
     await fetchBkEntries();
     await fetchBkSummary();
   };
@@ -645,6 +665,15 @@ export default function AdminPage() {
                   <input type="text" placeholder="参考号/备注 (可选)" value={bkForm.notes} onChange={e => setBkForm({...bkForm, notes: e.target.value})}
                     className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none" />
                 </div>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer px-4 py-2 border border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors">
+                    <span className="text-sm text-gray-600">📎 {receiptFile ? receiptFile.name : '上传小票/收据'}</span>
+                    <input type="file" accept="image/*,.pdf" className="hidden" onChange={e => setReceiptFile(e.target.files?.[0] || null)} />
+                  </label>
+                  {receiptFile && (
+                    <button type="button" onClick={() => setReceiptFile(null)} className="text-xs text-red-500 hover:text-red-700">✕ 移除</button>
+                  )}
+                </div>
                 <button type="submit" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
                   ➕ 添加记录
                 </button>
@@ -667,6 +696,7 @@ export default function AdminPage() {
                         <th className="px-4 py-3 text-left">描述</th>
                         <th className="px-4 py-3 text-right">金额</th>
                         <th className="px-4 py-3 text-left">支付方式</th>
+                        <th className="px-4 py-3 text-center">凭证</th>
                         <th className="px-4 py-3 text-center">操作</th>
                       </tr>
                     </thead>
@@ -687,6 +717,11 @@ export default function AdminPage() {
                             {entry.type === 'income' ? '+' : '-'}${entry.amount.toFixed(2)}
                           </td>
                           <td className="px-4 py-3 text-gray-500">{entry.paymentMethod || '-'}</td>
+                          <td className="px-4 py-3 text-center">
+                            {entry.receiptUrl ? (
+                              <a href={entry.receiptUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-xs">📎 查看</a>
+                            ) : <span className="text-gray-300">-</span>}
+                          </td>
                           <td className="px-4 py-3 text-center">
                             <button onClick={() => deleteBkEntry(entry.id)}
                               className="px-2 py-1 text-xs bg-gray-50 text-gray-400 rounded hover:bg-red-50 hover:text-red-500">🗑</button>

@@ -11,6 +11,7 @@ export interface BookkeepingEntry {
   description: string;
   paymentMethod?: string;
   reference?: string;
+  receiptUrl?: string;
   notes?: string;
 }
 
@@ -45,6 +46,7 @@ export interface CreateEntryInput {
   description: string;
   paymentMethod?: string;
   reference?: string;
+  receiptUrl?: string;
   notes?: string;
 }
 
@@ -61,6 +63,7 @@ export async function getAllEntries(): Promise<BookkeepingEntry[]> {
     description: row.description,
     paymentMethod: row.payment_method,
     reference: row.reference,
+    receiptUrl: row.receipt_url,
     notes: row.notes,
   }));
 }
@@ -70,8 +73,8 @@ export async function createEntry(input: CreateEntryInput): Promise<BookkeepingE
   const id = `bk_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
   await sql`
-    INSERT INTO bookkeeping (id, date, type, category, amount, description, payment_method, reference, notes)
-    VALUES (${id}, ${input.date}, ${input.type}, ${input.category}, ${input.amount}, ${input.description}, ${input.paymentMethod || null}, ${input.reference || null}, ${input.notes || null})
+    INSERT INTO bookkeeping (id, date, type, category, amount, description, payment_method, reference, receipt_url, notes)
+    VALUES (${id}, ${input.date}, ${input.type}, ${input.category}, ${input.amount}, ${input.description}, ${input.paymentMethod || null}, ${input.reference || null}, ${input.receiptUrl || null}, ${input.notes || null})
   `;
 
   return {
@@ -84,6 +87,7 @@ export async function createEntry(input: CreateEntryInput): Promise<BookkeepingE
     description: input.description,
     paymentMethod: input.paymentMethod,
     reference: input.reference,
+    receiptUrl: input.receiptUrl,
     notes: input.notes,
   };
 }

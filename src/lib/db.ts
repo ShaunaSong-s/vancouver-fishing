@@ -31,6 +31,7 @@ export async function initDatabase() {
       description TEXT NOT NULL,
       payment_method TEXT,
       reference TEXT,
+      receipt_url TEXT,
       notes TEXT
     )
   `;

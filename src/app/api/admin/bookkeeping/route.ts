@@ -34,13 +34,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const body = await req.json();
-  const { date, type, category, amount, description, paymentMethod, reference, notes } = body;
+  const { date, type, category, amount, description, paymentMethod, reference, receiptUrl, notes } = body;
 
   if (!date || !type || !category || !amount || !description) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
-  const entry = await createEntry({ date, type, category, amount: Number(amount), description, paymentMethod, reference, notes });
+  const entry = await createEntry({ date, type, category, amount: Number(amount), description, paymentMethod, reference, receiptUrl, notes });
   return NextResponse.json({ entry }, { status: 201 });
 }
 
