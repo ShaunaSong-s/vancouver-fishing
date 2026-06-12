@@ -110,14 +110,36 @@ export default function AdminPage() {
 
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
 
+  const compressImage = (file: File): Promise<Blob> => {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith('image/')) {
+        resolve(file);
+        return;
+      }
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxWidth = 800;
+        const scale = Math.min(1, maxWidth / img.width);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => resolve(blob || file), 'image/jpeg', 0.7);
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const createBkEntry = async (e: React.FormEvent) => {
     e.preventDefault();
     let receiptUrl = '';
 
-    // Upload receipt if provided
+    // Upload receipt if provided (compressed)
     if (receiptFile) {
+      const compressed = await compressImage(receiptFile);
       const formData = new FormData();
-      formData.append('file', receiptFile);
+      formData.append('file', compressed, receiptFile.name.replace(/\.\w+$/, '.jpg'));
       const uploadRes = await fetch('/api/admin/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${password}` },
