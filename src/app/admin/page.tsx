@@ -20,6 +20,23 @@ interface Booking {
   createdAt: string;
 }
 
+interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  createdAt: string;
+  status: 'draft' | 'sent' | 'paid' | 'cancelled';
+  customerName: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  description: string;
+  amount: number;
+  date: string;
+  taxRate: number;
+  taxAmount: number;
+  total: number;
+  notes?: string;
+}
+
 const STATUS_COLORS = {
   pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
   confirmed: 'bg-green-100 text-green-800 border-green-200',
@@ -36,9 +53,17 @@ export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [authed, setAuthed] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'cancelled'>('all');
+  const [activeTab, setActiveTab] = useState<'bookings' | 'invoices'>('bookings');
+
+  // Invoice form state
+  const [invoiceForm, setInvoiceForm] = useState({
+    customerName: '', customerEmail: '', customerPhone: '',
+    description: '', amount: '', date: '', notes: '',
+  });
 
   const fetchBookings = useCallback(async () => {
     setLoading(true);
@@ -64,6 +89,52 @@ export default function AdminPage() {
     }
   }, [password]);
 
+  const fetchInvoices = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/invoices', {
+        headers: { Authorization: `Bearer ${password}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setInvoices(data.invoices);
+      }
+    } catch { /* ignore */ }
+  }, [password]);
+
+  const createInvoice = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/admin/invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${password}` },
+        body: JSON.stringify({ ...invoiceForm, amount: Number(invoiceForm.amount) }),
+      });
+      if (res.ok) {
+        setInvoiceForm({ customerName: '', customerEmail: '', customerPhone: '', description: '', amount: '', date: '', notes: '' });
+        await fetchInvoices();
+      }
+    } catch { setError('创建失败'); }
+  };
+
+  const updateInvoiceStatus = async (id: string, status: string) => {
+    await fetch('/api/admin/invoices', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${password}` },
+      body: JSON.stringify({ id, status }),
+    });
+    await fetchInvoices();
+  };
+
+  const deleteInvoiceItem = async (id: string) => {
+    if (!confirm('确定删除此发票？')) return;
+    await fetch('/api/admin/invoices', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${password}` },
+      body: JSON.stringify({ id }),
+    });
+    await fetchInvoices();
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthed(true);
@@ -73,10 +144,11 @@ export default function AdminPage() {
   useEffect(() => {
     if (authed) {
       fetchBookings();
-      const interval = setInterval(fetchBookings, 30000); // auto-refresh every 30s
+      fetchInvoices();
+      const interval = setInterval(() => { fetchBookings(); fetchInvoices(); }, 30000);
       return () => clearInterval(interval);
     }
-  }, [authed, fetchBookings]);
+  }, [authed, fetchBookings, fetchInvoices]);
 
   const updateStatus = async (bookingId: string, status: string) => {
     try {
@@ -177,7 +249,7 @@ export default function AdminPage() {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={fetchBookings}
+              onClick={() => { fetchBookings(); fetchInvoices(); }}
               className="text-gray-500 hover:text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition-colors"
               title="刷新"
             >
@@ -191,7 +263,156 @@ export default function AdminPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Stats */}
+        {/* Tab switcher */}
+        <div className="flex gap-1 mb-6 bg-gray-100 rounded-xl p-1 w-fit">
+          <button
+            onClick={() => setActiveTab('bookings')}
+            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'bookings' ? 'bg-white text-blue-700 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            📋 预定管理
+          </button>
+          <button
+            onClick={() => setActiveTab('invoices')}
+            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'invoices' ? 'bg-white text-blue-700 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            🧾 发票管理
+          </button>
+        </div>
+
+        {activeTab === 'invoices' ? (
+          <>
+            {/* Create Invoice Form */}
+            <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">创建发票</h2>
+              <form onSubmit={createInvoice} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">客户姓名 *</label>
+                    <input type="text" required value={invoiceForm.customerName}
+                      onChange={e => setInvoiceForm({...invoiceForm, customerName: e.target.value})}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">邮箱</label>
+                    <input type="email" value={invoiceForm.customerEmail}
+                      onChange={e => setInvoiceForm({...invoiceForm, customerEmail: e.target.value})}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">电话</label>
+                    <input type="tel" value={invoiceForm.customerPhone}
+                      onChange={e => setInvoiceForm({...invoiceForm, customerPhone: e.target.value})}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="md:col-span-1">
+                    <label className="block text-xs font-medium text-gray-500 mb-1">描述 *</label>
+                    <input type="text" required value={invoiceForm.description}
+                      onChange={e => setInvoiceForm({...invoiceForm, description: e.target.value})}
+                      placeholder="e.g. Full day charter trip"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">金额 (CAD) *</label>
+                    <input type="number" required step="0.01" min="0" value={invoiceForm.amount}
+                      onChange={e => setInvoiceForm({...invoiceForm, amount: e.target.value})}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">日期 *</label>
+                    <input type="date" required value={invoiceForm.date}
+                      onChange={e => setInvoiceForm({...invoiceForm, date: e.target.value})}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">备注</label>
+                  <input type="text" value={invoiceForm.notes}
+                    onChange={e => setInvoiceForm({...invoiceForm, notes: e.target.value})}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                </div>
+                {invoiceForm.amount && (
+                  <p className="text-xs text-gray-500">
+                    小计: ${Number(invoiceForm.amount).toFixed(2)} + GST 5%: ${(Number(invoiceForm.amount) * 0.05).toFixed(2)} = 总计: <strong>${(Number(invoiceForm.amount) * 1.05).toFixed(2)}</strong>
+                  </p>
+                )}
+                <button type="submit" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                  创建发票
+                </button>
+              </form>
+            </div>
+
+            {/* Invoice List */}
+            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+              <div className="p-4 border-b border-gray-100">
+                <h2 className="text-lg font-bold text-gray-900">发票列表 ({invoices.length})</h2>
+              </div>
+              {invoices.length === 0 ? (
+                <div className="p-12 text-center text-gray-400">暂无发票</div>
+              ) : (
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
+                    <tr>
+                      <th className="px-4 py-3 text-left">发票号</th>
+                      <th className="px-4 py-3 text-left">客户</th>
+                      <th className="px-4 py-3 text-left">描述</th>
+                      <th className="px-4 py-3 text-left">日期</th>
+                      <th className="px-4 py-3 text-right">总额</th>
+                      <th className="px-4 py-3 text-center">状态</th>
+                      <th className="px-4 py-3 text-center">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {invoices.map(inv => (
+                      <tr key={inv.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 font-mono text-xs">{inv.invoiceNumber}</td>
+                        <td className="px-4 py-3 font-medium">{inv.customerName}</td>
+                        <td className="px-4 py-3 text-gray-600">{inv.description}</td>
+                        <td className="px-4 py-3">{inv.date}</td>
+                        <td className="px-4 py-3 text-right font-semibold">${inv.total.toFixed(2)}</td>
+                        <td className="px-4 py-3 text-center">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${
+                            inv.status === 'paid' ? 'bg-green-100 text-green-800 border-green-200' :
+                            inv.status === 'sent' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+                            inv.status === 'cancelled' ? 'bg-red-100 text-red-800 border-red-200' :
+                            'bg-yellow-100 text-yellow-800 border-yellow-200'
+                          }`}>
+                            {inv.status === 'paid' ? '已付' : inv.status === 'sent' ? '已发' : inv.status === 'cancelled' ? '取消' : '草稿'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <div className="flex gap-1 justify-center">
+                            {inv.status === 'draft' && (
+                              <button onClick={() => updateInvoiceStatus(inv.id, 'sent')}
+                                className="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100">发送</button>
+                            )}
+                            {inv.status !== 'paid' && inv.status !== 'cancelled' && (
+                              <button onClick={() => updateInvoiceStatus(inv.id, 'paid')}
+                                className="px-2 py-1 text-xs bg-green-50 text-green-600 rounded hover:bg-green-100">已付</button>
+                            )}
+                            {inv.status !== 'cancelled' && (
+                              <button onClick={() => updateInvoiceStatus(inv.id, 'cancelled')}
+                                className="px-2 py-1 text-xs bg-gray-50 text-gray-500 rounded hover:bg-red-50 hover:text-red-500">取消</button>
+                            )}
+                            <button onClick={() => deleteInvoiceItem(inv.id)}
+                              className="px-2 py-1 text-xs bg-gray-50 text-gray-400 rounded hover:bg-red-50 hover:text-red-500">🗑</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+            <p className="text-xs text-gray-400 mt-4">Payment: E-Transfer to info@topfishingcharter.ca</p>
+          </>
+        ) : (
+        <>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
           <div className="bg-white rounded-xl p-4 border border-gray-100">
             <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
@@ -334,6 +555,8 @@ export default function AdminPage() {
               </div>
             ))}
           </div>
+        )}
+        </>
         )}
       </div>
     </div>
