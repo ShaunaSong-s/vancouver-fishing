@@ -5,6 +5,12 @@ import { notifyAdmin } from '@/lib/notify';
 import { addToCloudDB } from '@/lib/wxcloud';
 
 export async function POST(req: NextRequest) {
+  // ── Booking system paused ──
+  return NextResponse.json(
+    { success: false, message: 'Booking is currently paused. Please contact us directly.' },
+    { status: 503 }
+  );
+
   try {
     const body = await req.json();
     const { boatId, bookingType, date, passengers, name, phone, email, wechat, paymentMethod, notes, lang } = body;

@@ -11,6 +11,9 @@ export default function BookingForm() {
   const { t, lang } = useLanguage();
   const { member } = useMember();
 
+  // ── Booking system paused ──
+  const BOOKING_PAUSED = true;
+
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState({
     boatId: 'kingfisher' as 'kingfisher' | 'axpor',
@@ -130,6 +133,26 @@ export default function BookingForm() {
   const stepLabels = lang === 'zh'
     ? ['选择行程', '联系方式', '确认付款']
     : ['Trip Details', 'Contact Info', 'Confirm & Pay'];
+
+  if (BOOKING_PAUSED) {
+    return (
+      <section id="booking" className="py-24 relative overflow-hidden">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
+          <span className="text-gold-400 text-sm font-semibold tracking-wider uppercase">{t.sections?.booking || 'Reservation'}</span>
+          <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-white mt-3 mb-4">
+            {t.booking.title}
+          </h2>
+          <div className="glass rounded-3xl shadow-2xl shadow-black/30 p-8 sm:p-12 mt-8">
+            <p className="text-white/80 text-lg">
+              {lang === 'zh'
+                ? '⚓ 预约系统暂时关闭，请稍后再来或直接联系我们。'
+                : '⚓ Online booking is currently paused. Please contact us directly to arrange your trip.'}
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="booking" className="py-24 relative overflow-hidden">
