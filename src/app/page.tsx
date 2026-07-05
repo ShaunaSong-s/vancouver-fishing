@@ -16,7 +16,6 @@ const jsonLd = {
   alternateName: '温哥华海尚海钓',
   description: 'Professional deep sea fishing charters in Vancouver, BC. Salmon, halibut, lingcod, and crab fishing trips departing from Imperial Landing Docks. Private charters and shared trips available.',
   url: 'https://topfishingcharter.ca',
-  email: 'info@topfishingcharter.ca',
   address: {
     '@type': 'PostalAddress',
     streetAddress: '4310 Bayview Street',
